@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd'
+import { Form, Input, Button, Typography, Divider } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 
