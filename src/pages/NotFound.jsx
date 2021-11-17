@@ -1,7 +1,8 @@
 import React from 'react'
+import NotFoundPage from '../components/notfound/NotFoundPage'
 
 function NotFound() {
-    return <div>Không tìm thấy trang</div>
+    return <NotFoundPage />
 }
 
 export default NotFound

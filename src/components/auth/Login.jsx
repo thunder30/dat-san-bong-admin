@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd'
+import { Form, Input, Button, Checkbox, Typography, Divider, Alert } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
+import { AuthContext } from '../../contexts/AuthProvider'
 
 const { Item } = Form
 const { Text, Paragraph } = Typography
@@ -18,39 +19,79 @@ const WrapperStyled = styled.div`
     .login-form-button {
         width: 100%;
     }
-    .title {
-        font-size: 1.75rem;
-    }
-    .desc {
-        color: #b3b3b3;
-        font-size: 1rem;
-        margin-bottom: 1.3rem;
-    }
 `
-
+const TextStyled = styled(Text)`
+    font-size: 1.75rem;
+`
+const ParagraphStyled = styled(Paragraph)`
+    color: #b3b3b3;
+    font-size: 1rem;
+    margin-bottom: 1.3rem;
+`
 function Login() {
-    const onFinish = (values) => {
-        console.log('Received value of form: ', values)
+    // Contexts
+    const { login } = useContext(AuthContext)
+
+    // Local state
+    const [loginForm, setLoginForm] = useState({
+        email: '',
+        password: '',
+    })
+    const [remember, setRemember] = useState(false)
+    const [alert, setAlert] = useState(null)
+
+    const handleUser = (e) => {
+        e.preventDefault()
+        setLoginForm((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }))
+    }
+
+    const handleRemember = ({ target: { checked } }) => {
+        setRemember(checked)
+    }
+
+    const [form] = Form.useForm()
+
+    // submit form
+    const handleOnFinish = async () => {
+        //console.log('Received value of form: ', values)
+        // call api login
+        try {
+            const data = await login(loginForm)
+            if (!data.success) {
+                // hien thi thong bao
+                console.log(data.message)
+                setAlert(data.message)
+                setTimeout(() => setAlert(null), 5000)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
         <WrapperStyled>
+            {alert && (
+                <Alert
+                    message={alert}
+                    type="error"
+                    showIcon
+                    closable
+                    afterClose={() => setAlert(null)}
+                />
+            )}
             <div>
-                <Text className="title">
+                <TextStyled>
                     Đăng nhập cùng <Text strong>Pate Team</Text>{' '}
-                </Text>
-                <Paragraph className="desc">
+                </TextStyled>
+                <ParagraphStyled>
                     Quản lý sân bóng của bạn một cách hiệu quả.
-                </Paragraph>
+                </ParagraphStyled>
             </div>
 
-            <Form
-                name="normal_login"
-                initialValues={{
-                    remember: true,
-                }}
-                onFinish={onFinish}
-            >
+            <Form name="normal_login" form={form} onFinish={handleOnFinish}>
                 <Item
                     name="email"
                     rules={[
@@ -65,11 +106,14 @@ function Login() {
                     ]}
                 >
                     <Input
+                        name="email"
                         prefix={
                             <UserOutlined className="site-form-item-icon" />
                         }
                         placeholder="Email"
                         size="large"
+                        value={loginForm.email}
+                        onChange={handleUser}
                     />
                 </Item>
                 <Item
@@ -82,17 +126,26 @@ function Login() {
                     ]}
                 >
                     <Input.Password
+                        name="password"
                         prefix={
                             <LockOutlined className="site-form-item-icon" />
                         }
                         placeholder="Mật khẩu"
                         size="large"
+                        value={loginForm.password}
+                        onChange={handleUser}
                     />
                 </Item>
 
                 <Item>
                     <Item name="remember" valuePropName="checked" noStyle>
-                        <Checkbox>Nhớ mật khẩu</Checkbox>
+                        <Checkbox
+                            name="remember"
+                            value={remember}
+                            onChange={handleRemember}
+                        >
+                            Nhớ mật khẩu
+                        </Checkbox>
                     </Item>
                     <Link to="/forgot" className="login-form-forgot">
                         Quên mật khẩu?

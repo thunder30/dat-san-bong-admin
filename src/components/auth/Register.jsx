@@ -22,11 +22,59 @@ const WrapperStyled = styled.div`
     }
 `
 
+const rulesEmail = [
+    {
+        required: true,
+        message: 'Vui lòng nhập email!',
+    },
+    {
+        type: 'email',
+        message: 'Vui lòng nhập đúng email!',
+    },
+]
+
+const rulesPassword = [
+    {
+        required: true,
+        message: 'Vui lòng nhập mật khẩu!',
+    },
+    {
+        pattern: /^(?=.*?[A-Z])/,
+        message: 'Ít nhất 1 ký tự [A-Z]',
+    },
+    {
+        pattern: /(?=.*?[a-z])/,
+        message: 'Ít nhất 1 ký tự [a-z]',
+    },
+    {
+        pattern: /(?=.*?[0-9])/,
+        message: 'Ít nhất 1 ký tự số [0-9]',
+    },
+    {
+        pattern: /(?=.*?[#?!@$ %^&*-])/,
+        message: 'Ít nhất 1 ký tự đặc biệt [#?!@$ %^&*-]',
+    },
+    {
+        pattern: /.{8,}$/,
+        message: 'Mật khẩu tối thiểu 8 ký tự',
+    },
+]
+
+const validateConfirm = ({ getFieldValue }) => ({
+    validator(_, value) {
+        if (!value || getFieldValue('password') === value) {
+            return Promise.resolve()
+        }
+
+        return Promise.reject(new Error('Xác nhận mật khẩu không đúng!'))
+    },
+})
+
 function Register() {
     const [form] = Form.useForm()
 
     const onFinish = (values) => {
-        alert(values)
+        console.log(values)
         form.resetFields()
     }
 
@@ -40,19 +88,7 @@ function Register() {
             </div>
 
             <Form form={form} onFinish={onFinish}>
-                <Item
-                    name="email"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập email!',
-                        },
-                        {
-                            type: 'email',
-                            message: 'Vui lòng nhập đúng email!',
-                        },
-                    ]}
-                >
+                <Item name="email" rules={rulesEmail}>
                     <Input
                         prefix={
                             <UserOutlined className="site-form-item-icon" />
@@ -61,15 +97,7 @@ function Register() {
                         size="large"
                     />
                 </Item>
-                <Item
-                    name="password"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập mật khẩu!',
-                        },
-                    ]}
-                >
+                <Item name="password" rules={rulesPassword}>
                     <Input.Password
                         prefix={
                             <LockOutlined className="site-form-item-icon" />
@@ -85,20 +113,7 @@ function Register() {
                             required: true,
                             message: 'Vui lòng xác nhận mật khẩu!',
                         },
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (
-                                    !value ||
-                                    getFieldValue('password') === value
-                                ) {
-                                    return Promise.resolve()
-                                }
-
-                                return Promise.reject(
-                                    new Error('Xác nhận mật khẩu không đúng!')
-                                )
-                            },
-                        }),
+                        validateConfirm,
                     ]}
                 >
                     <Input.Password
