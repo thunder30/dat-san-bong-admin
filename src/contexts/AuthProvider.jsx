@@ -2,8 +2,8 @@ import React, { createContext, useEffect, useReducer } from 'react'
 import axios from 'axios'
 import { API_BASE_URL, LOCAL_STORAGE_TOKEN_NAME } from './constants'
 import setHeaderToken from '../helpers/setHeaderToken'
-import reducer, { initialState } from '../reducers/authReducers/reducer'
-import { setAuth } from '../reducers/authReducers/actions'
+import reducer, { initialState } from '../reducers/authReducer/reducer'
+import { setAuth } from '../reducers/authReducer/actions'
 
 export const AuthContext = createContext()
 
