@@ -9,7 +9,7 @@ const successHandler = (response) => {
         const { status } = response
 
         notification.config({
-            duration: 20,
+            duration: 5,
         })
         notification.error({
             message: `Request error ${status}`,

@@ -15,7 +15,7 @@ const errorHandler = (error) => {
         const errorText = message || codeMessage[status]
 
         notification.config({
-            duration: 20,
+            duration: 5,
         })
         notification.error({
             message: `Request error ${status}`,
@@ -24,7 +24,7 @@ const errorHandler = (error) => {
         return response.data
     } else {
         notification.config({
-            duration: 20,
+            duration: 5,
         })
         notification.error({
             message: 'Unknown Error',
