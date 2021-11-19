@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Input, Button, Checkbox, Typography, Divider, Alert } from 'antd'
+import { Form, Input, Button, Checkbox, Typography } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { AuthContext } from '../../contexts/AuthProvider'
+import { login } from '../../reducers/authReducer/actions'
 
 const { Item } = Form
 const { Text, Paragraph } = Typography
@@ -30,17 +31,17 @@ const ParagraphStyled = styled(Paragraph)`
 `
 function Login() {
     // Contexts
-    const { login } = useContext(AuthContext)
+    const { dispatch } = useContext(AuthContext)
 
     // Local state
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
     })
-
     const [remember, setRemember] = useState(false)
-    const [alert, setAlert] = useState(null)
+    const [form] = Form.useForm()
 
+    // two ways binding
     const handleUser = (e) => {
         e.preventDefault()
         setLoginForm((prev) => ({
@@ -48,41 +49,19 @@ function Login() {
             [e.target.name]: e.target.value,
         }))
     }
-
     const handleRemember = ({ target: { checked } }) => {
         setRemember(checked)
     }
-
-    const [form] = Form.useForm()
 
     // submit form
     const handleOnFinish = async () => {
         //console.log('Received value of form: ', values)
         // call api login
-        try {
-            const data = await login(loginForm)
-            if (!data.success) {
-                // hien thi thong bao
-                console.log(data.message)
-                setAlert(data.message)
-                setTimeout(() => setAlert(null), 5000)
-            }
-        } catch (error) {
-            console.log(error)
-        }
+        dispatch(login(loginForm))
     }
 
     return (
         <WrapperStyled>
-            {alert && (
-                <Alert
-                    message={alert}
-                    type="error"
-                    showIcon
-                    closable
-                    afterClose={() => setAlert(null)}
-                />
-            )}
             <div>
                 <TextStyled>
                     Đăng nhập cùng <Text strong>Pate Team</Text>{' '}
@@ -164,12 +143,6 @@ function Login() {
                     </Button>
                 </Item>
             </Form>
-            <Divider plain>
-                Bạn chưa có tài khoản?{' '}
-                <Link to="/register" replace>
-                    Đăng ký
-                </Link>
-            </Divider>
         </WrapperStyled>
     )
 }

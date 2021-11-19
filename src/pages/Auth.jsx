@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import Login from '../components/auth/Login'
-import Register from '../components/auth/Register'
 import landing from '../assets/auth/undraw_all_the_data_re_hh4w.svg'
 import { AuthContext } from '../contexts/AuthProvider'
 
@@ -32,9 +31,6 @@ function Auth({ authRoute }) {
     const Form = {
         Login() {
             return <Login />
-        },
-        Register() {
-            return <Register />
         },
     }
 
