@@ -11,14 +11,14 @@ import errorHandler from '../../../request/errorHandler'
 const loadUser = async () => {
     const token = getCookie(ACCESS_TOKEN_NAME)
     setHeaderToken(token)
-    console.log(`token: `, token)
+    //console.log(`token: `, token)
 
     try {
         const res = await axios.get(`${API_BASE_URL}/auth`)
-        console.log('service success')
+        //console.log('service success')
         return successHandler(res)
     } catch (error) {
-        console.log('service error')
+        //console.log('service error')
         removeCookie(ACCESS_TOKEN_NAME)
         setHeaderToken(null)
         return errorHandler(error)

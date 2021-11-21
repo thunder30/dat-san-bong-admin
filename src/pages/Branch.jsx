@@ -1,22 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Table, Pagination, Space } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 
 import DashboardLayout from '../layout/DashboardLayout'
+import BranchProvider, { BranchContext } from '../contexts/BranchProvider'
+import DataTable from '../components/DataTable'
 
 const columns = [
     {
         title: 'Hoạt động',
-        dataIndex: 'isActive',
-        key: 'isActive',
-        render: (isActive) => {
-            return isActive ? 'Có' : 'Không'
+        dataIndex: 'isActived',
+        key: 'isActived',
+        render: (isActived) => {
+            return isActived ? 'Có' : 'Không'
         },
     },
     {
         title: 'Tên sân',
-        dataIndex: 'branchName',
-        key: 'branchName',
+        dataIndex: 'displayName',
+        key: 'displayName',
     },
     {
         title: 'Chủ sân',
@@ -25,8 +27,8 @@ const columns = [
     },
     {
         title: 'Số điện thoại',
-        dataIndex: 'phone',
-        key: 'phone',
+        dataIndex: 'phoneNumber',
+        key: 'phoneNumber',
     },
     {
         title: 'Địa chỉ sân bóng',
@@ -68,53 +70,53 @@ const columns = [
 const dataSource = [
     {
         key: '1',
-        branchName: 'Sân ông Sáu',
+        displayName: 'Sân ông Sáu',
         owner: 'Nguyễn Văn Sáu',
-        phone: '0987868787',
+        phoneNumber: '0987868787',
         address: '02 Lê Quang Định',
         ward: 'Phường 12',
         district: 'Bình Thạnh',
         province: 'TP HCM',
-        isActive: true,
+        isActived: true,
     },
     {
         key: '2',
-        branchName: 'Sân bóng hoàng gia bà Ba',
+        displayName: 'Sân bóng hoàng gia bà Ba',
         owner: 'Nguyễn Thị Ba',
-        phone: '0912435687',
+        phoneNumber: '0912435687',
         address: '123 Nguyễn Công Trứ',
         ward: 'Nguyễn Thái Bình',
         district: 'Quận 1',
         province: 'TP HCM',
-        isActive: false,
+        isActived: false,
     },
     {
         key: '3',
-        branchName: 'Sân cỏ nhân tạo ông Năm',
+        displayName: 'Sân cỏ nhân tạo ông Năm',
         owner: 'Võ Văn Năm',
-        phone: '0987654321',
+        phoneNumber: '0987654321',
         address: 'Đường số 5',
         ward: 'Tây hoà',
         district: 'Trảng Bom',
         province: 'Đồng Nai',
-        isActive: true,
+        isActived: true,
     },
     {
         key: '4',
-        branchName: 'Sân cỏ ông Tám',
+        displayName: 'Sân cỏ ông Tám',
         owner: 'Nguyễn Văn Tám',
-        phone: '0987654320',
+        phoneNumber: '0987654320',
         address: 'Đường số 6',
         ward: 'Tây hoà',
         district: 'Trảng Bom',
         province: 'Đồng Nai',
-        isActive: true,
+        isActived: true,
     },
     {
         key: '5',
-        branchName: 'Sân cỏ nhân tạo bà Hai',
+        displayName: 'Sân cỏ nhân tạo bà Hai',
         owner: 'Võ Thị Hai',
-        phone: '0945455454',
+        phoneNumber: '0945455454',
         address: 'Đường số 45',
         ward: 'Phường 14',
         district: 'Quận Gò Vấp',
@@ -125,20 +127,9 @@ const dataSource = [
 function Branch() {
     return (
         <DashboardLayout>
-            <Table
-                dataSource={dataSource}
-                columns={columns}
-                size="small"
-                pagination={{
-                    defaultCurrent: 1,
-                    defaultPageSize: 2,
-                    total: dataSource.length,
-                    showSizeChanger: true,
-                    pageSizeOptions: ['1', '2', '3'],
-                    showTotal: (total, range) =>
-                        `${range[0]}-${range[1]} of ${total} items`,
-                }}
-            ></Table>
+            <BranchProvider>
+                <DataTable columns={columns} />
+            </BranchProvider>
         </DashboardLayout>
     )
 }
