@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 import AppRouter from './AppRouter'
 import AuthRouter from './AuthRouter'
-import Navigation from '../layout/Navigation'
 import { AuthContext } from '../contexts/AuthProvider'
 
 function Router() {
@@ -44,7 +43,6 @@ function Router() {
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Navigation />
             <AppRouter />
         </Layout>
     )

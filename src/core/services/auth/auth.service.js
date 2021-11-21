@@ -33,7 +33,15 @@ const login = async ({ email, password }) => {
         })
 
         if (res.data.success) {
-            setCookie(ACCESS_TOKEN_NAME, res.data.accessToken)
+            if (
+                res.data.roles.includes('CHU_SAN') ||
+                res.data.roles.includes('ADMIN')
+            ) {
+                setCookie(ACCESS_TOKEN_NAME, res.data.accessToken)
+            } else {
+                res.data.success = false
+                res.data.message = 'Sai email hoặc mật khẩu!'
+            }
             // get user
         }
 

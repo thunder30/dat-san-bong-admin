@@ -7,7 +7,7 @@ const successHandler = (response) => {
         const message = data && data.message
         const errorText = message || codeMessage[response.status]
         const { status } = response
-
+        //console.log(`success handler: `, response)
         notification.config({
             duration: 5,
         })

@@ -3,29 +3,33 @@ import codeMessage from './codeMessage'
 
 const errorHandler = (error) => {
     const { response } = error
+
+    notification.config({
+        duration: 5,
+    })
+
     if (!response) {
+        notification.error({
+            message: 'Request Error',
+            description:
+                'Cannot connect to the server. Maybe server error or check your internet network',
+        })
         return {
             success: false,
             message:
                 'Cannot connect to the server, Check your internet network',
         }
     } else if (response && response.status) {
-        const { status } = response.status
+        const status = response.status
         const message = response.data && response.data.message
         const errorText = message || codeMessage[status]
 
-        notification.config({
-            duration: 5,
-        })
         notification.error({
             message: `Request error ${status}`,
             description: errorText,
         })
         return response.data
     } else {
-        notification.config({
-            duration: 5,
-        })
         notification.error({
             message: 'Unknown Error',
             description:
