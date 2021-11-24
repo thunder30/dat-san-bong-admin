@@ -7,6 +7,7 @@ function OwnerRoute() {
     const {
         authState: { user },
     } = useContext(AuthContext)
+
     return user.isAdmin ? <Navigate to="/admin" replace /> : <Outlet />
 }
 

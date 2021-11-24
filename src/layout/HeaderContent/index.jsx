@@ -1,25 +1,49 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { Avatar, Divider, Dropdown, Layout, Menu } from 'antd'
+import { Avatar, Divider, Dropdown, Layout, Menu, Select } from 'antd'
 import { UserOutlined, LogoutOutlined, InfoOutlined } from '@ant-design/icons'
-import avatar from '../../assets/auth/bg_1.jpg'
+import avatarMrsThree from '../../assets/icons/avatarMrsThree.svg'
+import { AuthContext } from '../../contexts/AuthProvider'
 
 const { Header } = Layout
 const { Item } = Menu
+const { Option } = Select
 
-const menu = (
+const DropdownMenu = (isAdmin) => (
     <Menu>
-        <Item key="1" icon={<InfoOutlined />}>
+        <Item key="profile" icon={<InfoOutlined />}>
+            <Link to={isAdmin ? '/admin/profile' : '/profile'} />
             Thông tin cá nhân
         </Item>
-        <Item key="2" icon={<LogoutOutlined />}>
+        <Item key="logout" icon={<LogoutOutlined />}>
             <Link to="/logout" />
             Đăng xuất
         </Item>
     </Menu>
 )
 
+const handleOnChange = (value) => {
+    console.log(value)
+}
+
+const SelectBranch = ({ branches }) => (
+    <Select
+        defaultValue="1"
+        style={{ width: 200, marginBottom: 15, marginLeft: 30 }}
+        onChange={handleOnChange}
+        size="large"
+        bordered={false}
+    >
+        <Option value="1">Chi nhánh 1</Option>
+        <Option value="2">Chi nhánh 2</Option>
+    </Select>
+)
+
 function HeaderContent() {
+    const {
+        authState: { user },
+    } = useContext(AuthContext)
+
     return (
         <Header
             className="site-layout-background"
@@ -28,15 +52,20 @@ function HeaderContent() {
                 background: 'none',
             }}
         >
-            <Dropdown overlay={menu} placement="bottomRight" arrow>
+            <SelectBranch />
+            <Dropdown
+                overlay={() => DropdownMenu(user.isAdmin)}
+                placement="bottomRight"
+                arrow
+            >
                 <Avatar
                     icon={<UserOutlined />}
-                    src={avatar}
+                    src={avatarMrsThree}
                     size="large"
                     style={{ marginBottom: 15 }}
                 />
             </Dropdown>
-            <Divider style={{ minWidth: 0 }} />
+            <Divider style={{ margin: 0 }} />
         </Header>
     )
 }

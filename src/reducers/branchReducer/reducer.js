@@ -1,4 +1,4 @@
-import { SET_BRANCHES } from './constants'
+import * as types from './constants'
 
 export const INIT_STATE = {
     branch: null,
@@ -9,10 +9,15 @@ export const INIT_STATE = {
 export default function reducer(state = INIT_STATE, action) {
     const { type, payload } = action
     switch (type) {
-        case SET_BRANCHES:
+        case types.LOAD_SUCCESS:
             return {
                 ...state,
-                branches: payload,
+                branches: [...payload],
+                isLoading: false,
+            }
+        case types.LOAD_FAILED:
+            return {
+                ...state,
                 isLoading: false,
             }
         default:

@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom'
 import { Menu } from 'antd'
 import {
     DashboardOutlined,
-    UserOutlined,
-    CustomerServiceOutlined,
-    TeamOutlined,
-    BranchesOutlined,
-    BarChartOutlined,
+    BookOutlined,
+    LineChartOutlined,
+    SisternodeOutlined,
+    DollarCircleOutlined,
 } from '@ant-design/icons'
 
 const { SubMenu } = Menu
@@ -27,9 +26,21 @@ export default function Manager() {
                 <Link to="/" />
                 Dashboard
             </Menu.Item>
-            <Menu.Item key="pitch" icon={<BarChartOutlined />}>
+            <Menu.Item key="pitch" icon={<SisternodeOutlined />}>
                 <Link to="/pitch" />
                 Quản lý sân bóng
+            </Menu.Item>
+            <Menu.Item key="price" icon={<DollarCircleOutlined />}>
+                <Link to="/price" />
+                Quản lý khung giá
+            </Menu.Item>
+            <Menu.Item key="booking" icon={<BookOutlined />}>
+                <Link to="/booking" />
+                Quản lý phiếu đặt
+            </Menu.Item>
+            <Menu.Item key="analytics" icon={<LineChartOutlined />}>
+                <Link to="/analytics" />
+                Thống kê
             </Menu.Item>
         </Menu>
     )

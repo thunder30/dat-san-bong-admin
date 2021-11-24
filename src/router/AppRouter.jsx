@@ -12,6 +12,9 @@ import Owner from '../pages/Owner'
 import Branch from '../pages/Branch'
 import Analytics from '../pages/Analytics'
 import Pitch from '../pages/Pitch'
+import Booking from '../pages/Booking'
+import Profile from '../pages/Profile'
+import Price from '../pages/Price'
 
 function AppRouter() {
     return (
@@ -21,6 +24,10 @@ function AppRouter() {
                 <Route path="/" element={<OwnerRoute />}>
                     <Route index element={<DashboardOwner />} />
                     <Route path="pitch" element={<Pitch />} />
+                    <Route path="price" element={<Price />} />
+                    <Route path="booking" element={<Booking />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="profile" element={<Profile />} />
                 </Route>
 
                 <Route path="admin" element={<Outlet />}>
@@ -29,6 +36,7 @@ function AppRouter() {
                     <Route path="owner" element={<Owner />} />
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="branch" element={<Branch />} />
+                    <Route path="profile" element={<Profile />} />
                 </Route>
 
                 <Route path="logout" element={<Logout />} />

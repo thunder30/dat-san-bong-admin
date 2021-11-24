@@ -1,1 +1,3 @@
 export const SET_BRANCHES = 'SET_BRANCHES'
+export const LOAD_FAILED = 'LOAD_FAILED'
+export const LOAD_SUCCESS = 'LOAD_SUCCESS'

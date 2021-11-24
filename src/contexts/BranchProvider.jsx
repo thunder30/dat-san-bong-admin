@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react'
 import reducer, { INIT_STATE } from '../reducers/branchReducer/reducer'
-import * as actions from '../reducers/branchReducer/actions'
+import * as types from '../reducers/branchReducer/constants'
 import * as services from '../core/services/branch'
 
 export const BranchContext = createContext()
@@ -10,16 +10,24 @@ function BranchProvider({ children }) {
 
     const findBranch = async () => {
         const data = await services.findBranch()
+        console.log(data)
         if (data.success) {
-            dispatch(actions.setBranch(data.pitchBranch))
+            dispatch({ type: types.LOAD_SUCCESS, payload: data.pitchBranch })
         } else {
-            dispatch({})
+            dispatch({
+                type: types.LOAD_FAILED,
+            })
         }
     }
 
     useEffect(() => {
         // get all
         findBranch()
+        console.log(`mount branch provider`)
+
+        return () => {
+            console.log(`unmount branch provider`)
+        }
     }, [])
 
     const value = { branchState }

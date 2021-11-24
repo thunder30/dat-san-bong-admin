@@ -1,8 +1,8 @@
-import { SET_BRANCHES } from './constants'
+import * as types from './constants'
 
 export const setBranch = (payload) => {
     return {
-        type: SET_BRANCHES,
+        type: types.SET_BRANCHES,
         payload,
     }
 }

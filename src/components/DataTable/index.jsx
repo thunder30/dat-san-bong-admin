@@ -1,37 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Table } from 'antd'
 
-import { BranchContext } from '../../contexts/BranchProvider'
-
-function DataTable({ columns }) {
-    const {
-        branchState: { isLoading, branches },
-    } = useContext(BranchContext)
-
-    const dataSource = branches.map(
-        ({
-            displayName,
-            owner,
-            phoneNumber,
-            address,
-            ward,
-            district,
-            province,
-            isActived,
-        }) => {
-            return {
-                owner: owner._id,
-                displayName,
-                phoneNumber,
-                address,
-                ward,
-                district,
-                province,
-                isActived,
-            }
-        }
-    )
-
+function DataTable({ columns, dataSource, isLoading }) {
     const pagination = {
         defaultCurrent: 1,
         defaultPageSize: 2,

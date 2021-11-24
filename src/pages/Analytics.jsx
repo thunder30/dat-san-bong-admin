@@ -6,8 +6,7 @@ function Analytics() {
     return (
         <DashboardLayout>
             <Row gutter={16}>
-                <Col span={12}>col-1 customer</Col>
-                <Col span={12}>col-2 customer</Col>
+                <Col span={24}>Analytics</Col>
             </Row>
         </DashboardLayout>
     )

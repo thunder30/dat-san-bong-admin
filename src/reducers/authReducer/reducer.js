@@ -1,4 +1,4 @@
-import { SET_AUTH } from './constants'
+import * as types from './constants'
 
 export const initialState = {
     isAuthenticated: false,
@@ -9,8 +9,28 @@ export const initialState = {
 function reducer(state = initialState, { type, payload }) {
     console.log(`reduce - payload: `, payload)
     switch (type) {
-        case SET_AUTH:
-            return { ...state, ...payload }
+        case types.AUTH_SUCCESS:
+            return {
+                ...state,
+                user: payload,
+                isLoading: false,
+                isAuthenticated: true,
+            }
+        case types.AUTH_FAILED:
+            return {
+                ...initialState,
+                isLoading: false,
+            }
+        case types.AUTH_RESET:
+            return {
+                ...initialState,
+                isLoading: false,
+            }
+        case types.AUTH_LOADING:
+            return {
+                ...state,
+                isLoading: true,
+            }
         default:
             return state
     }

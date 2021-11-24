@@ -10,14 +10,26 @@ const findBranch = async () => {
     setHeaderToken(accessToken)
 
     try {
-        const res = await axios.get(API_BASE_URL + '/pitchBranch')
-        console.log(res)
+        const res = await axios.get(API_BASE_URL + '/pitchbranch')
         return successHandler(res)
     } catch (error) {
-        token.remove()
-        setHeaderToken(null)
         return errorHandler(error)
     }
 }
 
-export { findBranch }
+const findBranchByOwner = async (ownerId) => {
+    const accessToken = token.get()
+    setHeaderToken(accessToken)
+
+    try {
+        const res = await axios.get(
+            API_BASE_URL + `/pitchbranch/owner/${ownerId}`
+        )
+        console.log(res)
+        return successHandler(res)
+    } catch (error) {
+        return errorHandler(error)
+    }
+}
+
+export { findBranch, findBranchByOwner }

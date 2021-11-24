@@ -2,14 +2,14 @@ import React from 'react'
 import { Col, Row } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
 
-function Customer() {
+function Booking() {
     return (
         <DashboardLayout>
             <Row gutter={16}>
-                <Col span={24}>Customer</Col>
+                <Col span={24}>Booking</Col>
             </Row>
         </DashboardLayout>
     )
 }
 
-export default Customer
+export default Booking
