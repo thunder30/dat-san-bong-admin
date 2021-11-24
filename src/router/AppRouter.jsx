@@ -1,8 +1,9 @@
 import React from 'react'
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute'
 import OwnerRoute from './OwnerRoute'
+import AdminRoute from './AdminRoute'
 import DashboardOwner from '../pages/DashboardOwner'
 import Logout from '../pages/Logout'
 import NotFound from '../pages/NotFound'
@@ -15,6 +16,7 @@ import Pitch from '../pages/Pitch'
 import Booking from '../pages/Booking'
 import Profile from '../pages/Profile'
 import Price from '../pages/Price'
+import Setting from '../pages/Setting'
 
 function AppRouter() {
     return (
@@ -28,9 +30,10 @@ function AppRouter() {
                     <Route path="booking" element={<Booking />} />
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="profile" element={<Profile />} />
+                    <Route path="setting" element={<Setting />} />
                 </Route>
 
-                <Route path="admin" element={<Outlet />}>
+                <Route path="admin" element={<AdminRoute />}>
                     <Route index element={<Dashboard />} />
                     <Route path="customer" element={<Customer />} />
                     <Route path="owner" element={<Owner />} />

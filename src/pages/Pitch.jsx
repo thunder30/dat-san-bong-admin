@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { Row, Col, Tabs, Card, Modal } from 'antd'
+import React, { useContext, useEffect, useState } from 'react'
+import { Row, Col, Tabs, Card, Modal, Empty } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import DashboardLayout from '../layout/DashboardLayout'
+import { OwnerContext } from '../contexts/OwnerProvider'
+import SpinStyled from '../components/Spin'
 
 const { TabPane } = Tabs
 
@@ -49,7 +51,7 @@ const pitches = {
     ],
 }
 
-const pitchTypes = [
+const pitchTypesDemo = [
     {
         key: 'san5',
         title: 'Sân 5 người',
@@ -70,7 +72,13 @@ const CardStyled = styled(Card)`
 `
 
 function Pitch() {
-    const [panes, setPanes] = useState(pitchTypes)
+    const {
+        state: {
+            isLoading,
+            current: { pitchTypes },
+        },
+    } = useContext(OwnerContext)
+    const [panes, setPanes] = useState([])
     const [isVisibleModalEdit, setIsVisibleModalEdit] = useState(false)
     const [isVisibleModalDelete, setIsVisibleModalDelete] = useState(false)
 
@@ -102,10 +110,10 @@ function Pitch() {
         </Modal>
     )
 
-    const renderCard = (key) => (
+    const renderCard = (pitchs) => (
         <Row gutter={[10]}>
-            {pitches[key].map(({ name, description }) => (
-                <Col span={6} style={{ margin: '6px 0' }}>
+            {pitchs.map(({ displayName, description }, index) => (
+                <Col span={6} style={{ margin: '6px 0' }} key={index}>
                     <CardStyled
                         style={{
                             textAlign: 'center',
@@ -126,7 +134,7 @@ function Pitch() {
                             />,
                         ]}
                     >
-                        <h3>{name}</h3>
+                        <h3>{displayName}</h3>
 
                         <p>{description}</p>
                     </CardStyled>
@@ -143,8 +151,18 @@ function Pitch() {
         add() {
             // console.log(`Add new tab`)
             const newTab = {
-                title: 'Sân 11 người',
-                key: 'san5',
+                displayName: 'Sân 11 người',
+                key: 'san11',
+                pitchs: [
+                    {
+                        displayName: 'Sân 11-1',
+                        description: 'Sân bóng 11 người',
+                    },
+                    {
+                        displayName: 'Sân 11-2',
+                        description: 'Sân bóng 11 người',
+                    },
+                ],
             }
             panes.push(newTab)
             setPanes([...panes])
@@ -160,31 +178,41 @@ function Pitch() {
         actions[action](targetKey) // call function
     }
 
-    return (
+    useEffect(() => {
+        setPanes(pitchTypes)
+    }, [pitchTypes])
+
+    return isLoading ? (
+        <SpinStyled />
+    ) : (
         <DashboardLayout>
             <Row gutter={[16]}>
                 <Col span={24}>
-                    <Tabs
-                        defaultActiveKey="0"
-                        size="large"
-                        type="editable-card"
-                        style={{ marginBottom: 16 }}
-                        onChange={handleOnChange}
-                        onEdit={handleOnEdit}
-                    >
-                        {panes.map(({ title, closeable, key }, index) => (
-                            <TabPane
-                                tab={title}
-                                key={index}
-                                closable={closeable}
-                            >
-                                {renderCard(key)}
-                            </TabPane>
-                        ))}
-                    </Tabs>
-                    {handleModalEdit()}
-                    {handleModalDelete()}
+                    {!panes || panes.length === 0 ? (
+                        <Empty />
+                    ) : (
+                        <Tabs
+                            defaultActiveKey="0"
+                            size="large"
+                            type="editable-card"
+                            style={{ marginBottom: 16 }}
+                            onChange={handleOnChange}
+                            onEdit={handleOnEdit}
+                        >
+                            {panes.map(({ displayName, id, pitchs }) => (
+                                <TabPane
+                                    tab={displayName}
+                                    key={id}
+                                    closable={false}
+                                >
+                                    {renderCard(pitchs)}
+                                </TabPane>
+                            ))}
+                        </Tabs>
+                    )}
                 </Col>
+                {handleModalEdit()}
+                {handleModalDelete()}
             </Row>
         </DashboardLayout>
     )

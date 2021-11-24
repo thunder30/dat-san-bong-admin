@@ -1,13 +1,13 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { Avatar, Divider, Dropdown, Layout, Menu, Select } from 'antd'
+import { Avatar, Divider, Dropdown, Layout, Menu } from 'antd'
 import { UserOutlined, LogoutOutlined, InfoOutlined } from '@ant-design/icons'
 import avatarMrsThree from '../../assets/icons/avatarMrsThree.svg'
 import { AuthContext } from '../../contexts/AuthProvider'
+import SelectBranch from '../../components/SelectBranch'
 
 const { Header } = Layout
 const { Item } = Menu
-const { Option } = Select
 
 const DropdownMenu = (isAdmin) => (
     <Menu>
@@ -22,26 +22,11 @@ const DropdownMenu = (isAdmin) => (
     </Menu>
 )
 
-const handleOnChange = (value) => {
-    console.log(value)
-}
-
-const SelectBranch = ({ branches }) => (
-    <Select
-        defaultValue="1"
-        style={{ width: 200, marginBottom: 15, marginLeft: 30 }}
-        onChange={handleOnChange}
-        size="large"
-        bordered={false}
-    >
-        <Option value="1">Chi nhánh 1</Option>
-        <Option value="2">Chi nhánh 2</Option>
-    </Select>
-)
-
 function HeaderContent() {
     const {
-        authState: { user },
+        authState: {
+            user: { isAdmin },
+        },
     } = useContext(AuthContext)
 
     return (
@@ -52,9 +37,9 @@ function HeaderContent() {
                 background: 'none',
             }}
         >
-            <SelectBranch />
+            {!isAdmin && <SelectBranch />}
             <Dropdown
-                overlay={() => DropdownMenu(user.isAdmin)}
+                overlay={() => DropdownMenu(isAdmin)}
                 placement="bottomRight"
                 arrow
             >

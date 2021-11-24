@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { Menu } from 'antd'
 import {
@@ -7,21 +7,15 @@ import {
     LineChartOutlined,
     SisternodeOutlined,
     DollarCircleOutlined,
+    SettingOutlined,
 } from '@ant-design/icons'
-
-const { SubMenu } = Menu
 
 export default function Manager() {
     const selected =
         window.location.pathname.slice(1, window.location.pathname.length) ||
         '/'
     return (
-        <Menu
-            theme="dark"
-            defaultSelectedKeys={[selected]}
-            mode="inline"
-            onClick={(e) => console.log(e)}
-        >
+        <Menu theme="dark" defaultSelectedKeys={[selected]} mode="inline">
             <Menu.Item key="/" icon={<DashboardOutlined />}>
                 <Link to="/" />
                 Dashboard
@@ -41,6 +35,10 @@ export default function Manager() {
             <Menu.Item key="analytics" icon={<LineChartOutlined />}>
                 <Link to="/analytics" />
                 Thống kê
+            </Menu.Item>
+            <Menu.Item key="setting" icon={<SettingOutlined />}>
+                <Link to="/setting" />
+                Cài đặt
             </Menu.Item>
         </Menu>
     )

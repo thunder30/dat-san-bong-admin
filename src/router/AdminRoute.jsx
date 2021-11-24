@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { Outlet, Navigate } from 'react-router-dom'
+import { AuthContext } from '../contexts/AuthProvider'
 
-function AdminRoute({ children }) {
-    const isAdmin = true
-    return isAdmin ? { children } : <div>Adminroute failed</div>
+function AdminRoute() {
+    const {
+        authState: { user },
+    } = useContext(AuthContext)
+
+    return user.isAdmin ? <Outlet /> : <Navigate to="/notfound" />
 }
 
 export default AdminRoute
