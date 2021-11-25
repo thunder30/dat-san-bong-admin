@@ -1,7 +1,6 @@
 import { Select } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { OwnerContext } from '../../contexts/OwnerProvider'
-import SpinStyled from '../Spin'
 
 const { Option } = Select
 
@@ -10,7 +9,6 @@ function SelectBranch() {
         state: {
             branches,
             current: { branch },
-            isLoading,
         },
         setCurrentBranch,
     } = useContext(OwnerContext)

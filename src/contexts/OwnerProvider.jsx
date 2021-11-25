@@ -65,7 +65,8 @@ function OwnerProvider({ children }) {
         console.log(`run useEffect owner`)
         findBranch(user._id).then((data) => {
             const { pitchBranch } = data
-            if (pitchBranch[0]) {
+            console.log(data)
+            if (pitchBranch && pitchBranch.length !== 0) {
                 findBranchById(pitchBranch[0]._id)
             }
         })

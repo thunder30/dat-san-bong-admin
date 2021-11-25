@@ -64,12 +64,13 @@ const pitchTypesDemo = [
 function Pitch() {
     const {
         state: {
+            branches,
             isLoading,
             current: { pitchTypes },
         },
     } = useContext(OwnerContext)
 
-    if (isLoading || pitchTypes === null) {
+    if (isLoading) {
         return <SpinStyled />
     }
 
@@ -77,7 +78,7 @@ function Pitch() {
         <DashboardLayout>
             <Row gutter={[16]}>
                 <Col span={24}>
-                    <TabPitch pitchTypes={pitchTypes} />
+                    <TabPitch pitchTypes={pitchTypes || []} />
                 </Col>
             </Row>
         </DashboardLayout>
