@@ -27,6 +27,8 @@ function OwnerProvider({ children }) {
                 type: types.BRANCH_LOAD_FAILED,
             })
         }
+
+        return data
     }
 
     const findBranchById = async (id) => {
@@ -61,7 +63,12 @@ function OwnerProvider({ children }) {
 
     useEffect(() => {
         console.log(`run useEffect owner`)
-        findBranch(user._id)
+        findBranch(user._id).then((data) => {
+            const { pitchBranch } = data
+            if (pitchBranch[0]) {
+                findBranchById(pitchBranch[0]._id)
+            }
+        })
     }, [user])
 
     const value = { state, findBranchById, setCurrentBranch }
