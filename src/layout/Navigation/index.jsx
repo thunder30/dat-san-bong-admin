@@ -8,7 +8,7 @@ import { AuthContext } from '../../contexts/AuthProvider'
 const { Sider } = Layout
 
 const LogoStyled = styled.div`
-    height: 32px;
+    height: 34px;
     margin: 16px;
     background: rgba(255, 255, 255, 0.3);
 `

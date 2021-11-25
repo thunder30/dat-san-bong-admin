@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Row, Col, Card, Modal, Empty, Tabs } from 'antd'
+import { Row, Col, Card, Modal, Tabs } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 
@@ -46,7 +46,7 @@ function TabPitch({ pitchTypes }) {
     const renderCard = (pitchs) => (
         <Row gutter={[10]}>
             {pitchs.map(({ displayName, description }, index) => (
-                <Col span={6} style={{ margin: '6px 0' }} key={index}>
+                <Col span={8} style={{ margin: '6px 0' }} key={index}>
                     <CardStyled
                         style={{
                             textAlign: 'center',
@@ -111,9 +111,7 @@ function TabPitch({ pitchTypes }) {
         actions[action](targetKey) // call function
     }
 
-    return !panes || panes.length === 0 ? (
-        <Empty />
-    ) : (
+    return (
         <>
             <Tabs
                 defaultActiveKey="0"

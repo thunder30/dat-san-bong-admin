@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Row, Col } from 'antd'
+import { Row, Col, Card, Empty } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
 import SpinStyled from '../components/Spin'
@@ -64,7 +64,6 @@ const pitchTypesDemo = [
 function Pitch() {
     const {
         state: {
-            branches,
             isLoading,
             current: { pitchTypes },
         },
@@ -77,9 +76,38 @@ function Pitch() {
     return (
         <DashboardLayout>
             <Row gutter={[16]}>
-                <Col span={24}>
-                    <TabPitch pitchTypes={pitchTypes || []} />
-                </Col>
+                {!pitchTypes || pitchTypes.length === 0 ? (
+                    <Col span={24}>
+                        <Empty />
+                    </Col>
+                ) : (
+                    <>
+                        <Col span={18}>
+                            <TabPitch pitchTypes={pitchTypes || []} />
+                        </Col>
+                        <Col span={6}>
+                            <Card
+                                title="Bảng giá"
+                                style={{
+                                    borderRadius: 12,
+                                    minHeight: 200,
+                                    backgroundColor: '#92e1a082', // #d5d5d5
+                                }}
+                            >
+                                <p>
+                                    07:00 - 16:00{' || '}
+                                    <span
+                                        style={{
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        500,000
+                                    </span>{' '}
+                                </p>
+                            </Card>
+                        </Col>
+                    </>
+                )}
             </Row>
         </DashboardLayout>
     )
