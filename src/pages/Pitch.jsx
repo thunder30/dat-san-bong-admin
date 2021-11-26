@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Row, Col, Card, Empty } from 'antd'
+import { Row, Col, Empty } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
 import SpinStyled from '../components/Spin'
@@ -76,38 +76,13 @@ function Pitch() {
     return (
         <DashboardLayout>
             <Row gutter={[16]}>
-                {!pitchTypes || pitchTypes.length === 0 ? (
-                    <Col span={24}>
+                <Col span={24}>
+                    {!pitchTypes || pitchTypes.length === 0 ? (
                         <Empty />
-                    </Col>
-                ) : (
-                    <>
-                        <Col span={18}>
-                            <TabPitch pitchTypes={pitchTypes || []} />
-                        </Col>
-                        <Col span={6}>
-                            <Card
-                                title="Bảng giá"
-                                style={{
-                                    borderRadius: 12,
-                                    minHeight: 200,
-                                    backgroundColor: '#92e1a082', // #d5d5d5
-                                }}
-                            >
-                                <p>
-                                    07:00 - 16:00{' || '}
-                                    <span
-                                        style={{
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        500,000
-                                    </span>{' '}
-                                </p>
-                            </Card>
-                        </Col>
-                    </>
-                )}
+                    ) : (
+                        <TabPitch pitchTypes={pitchTypes || []} />
+                    )}
+                </Col>
             </Row>
         </DashboardLayout>
     )

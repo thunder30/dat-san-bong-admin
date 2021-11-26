@@ -4,6 +4,7 @@ import { EditOutlined } from '@ant-design/icons'
 
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
+import { convertDateTime } from '../helpers/convert'
 
 const Content = ({
     phoneNumber,
@@ -24,7 +25,7 @@ const Content = ({
             <p>Mô tả: {description}</p>
             <p>Thời gian hoạt động: {`${startTime} - ${endTime}`}</p>
             <p>Trạng thái: {isActived ? 'Đang hoạt động' : 'Dừng hoạt động'}</p>
-            <p>Tạo lúc: {createdAt}</p>
+            <p>Tạo lúc: {convertDateTime(createdAt)}</p>
         </>
     )
 }

@@ -10,21 +10,25 @@ const CardStyled = styled(Card)`
         border-bottom-left-radius: 12px;
         border-bottom-right-radius: 12px;
     }
+    .ant-card-body {
+        padding: 16px;
+    }
 `
 
 function TabPitch({ pitchTypes }) {
     const [panes, setPanes] = useState(pitchTypes)
-    const [isVisibleModalEdit, setIsVisibleModalEdit] = useState(false)
-    const [isVisibleModalDelete, setIsVisibleModalDelete] = useState(false)
+    const [visibleModalDelete, setVisibleModalDelete] = useState(false)
+    const [visibleModalEdit, setVisibleModalEdit] = useState(false)
+    const [visibleModalEditPrice, setVisibleModalEditPrice] = useState(false)
 
     const handleModalDelete = () => (
         <Modal
             title="Xoá sân bóng"
             okText="Đồng ý"
             cancelText="Huỷ bỏ"
-            visible={isVisibleModalDelete}
-            onOk={() => setIsVisibleModalDelete(false)}
-            onCancel={() => setIsVisibleModalDelete(false)}
+            visible={visibleModalDelete}
+            onOk={() => setVisibleModalDelete(false)}
+            onCancel={() => setVisibleModalDelete(false)}
         >
             {'Hành động này sẽ không thể khôi phục'}
         </Modal>
@@ -35,11 +39,24 @@ function TabPitch({ pitchTypes }) {
             title="Sửa thông tin sân bóng"
             okText="Lưu"
             cancelText="Huỷ bỏ"
-            visible={isVisibleModalEdit}
-            onOk={() => setIsVisibleModalEdit(false)}
-            onCancel={() => setIsVisibleModalEdit(false)}
+            visible={visibleModalEdit}
+            onOk={() => setVisibleModalEdit(false)}
+            onCancel={() => setVisibleModalEdit(false)}
         >
             {'Thông tin sân bóng hiển thị ở đây'}
+        </Modal>
+    )
+
+    const handleModalEditPrice = () => (
+        <Modal
+            title="Sửa bảng giá"
+            okText="Lưu"
+            cancelText="Huỷ bỏ"
+            visible={visibleModalEditPrice}
+            onOk={() => setVisibleModalEditPrice(false)}
+            onCancel={() => setVisibleModalEditPrice(false)}
+        >
+            {'Thông tin bảng giá hiển thị ở đây'}
         </Modal>
     )
 
@@ -51,25 +68,30 @@ function TabPitch({ pitchTypes }) {
                         style={{
                             textAlign: 'center',
                             borderRadius: 12,
-                            minHeight: 150,
                         }}
                         hoverable
                         actions={[
                             <EditOutlined
                                 key="edit"
                                 title="Sửa thông tin sân"
-                                onClick={() => setIsVisibleModalEdit(true)}
+                                onClick={() => setVisibleModalEdit(true)}
                             />,
                             <DeleteOutlined
                                 key="delete"
                                 title="Xoá sân này"
-                                onClick={() => setIsVisibleModalDelete(true)}
+                                onClick={() => setVisibleModalDelete(true)}
                             />,
                         ]}
                     >
                         <h3>{displayName}</h3>
 
-                        <p>{description}</p>
+                        <p
+                            style={{
+                                minHeight: 50,
+                            }}
+                        >
+                            {description}
+                        </p>
                     </CardStyled>
                 </Col>
             ))}
@@ -96,10 +118,52 @@ function TabPitch({ pitchTypes }) {
                         description: 'Sân bóng 11 người',
                     },
                 ],
+                prices: [
+                    {
+                        time: {
+                            startTime: '06:00',
+                            endTime: '16:00',
+                        },
+                        price: 500000,
+                    },
+                    {
+                        time: {
+                            startTime: '16:00',
+                            endTime: '20:00',
+                        },
+                        price: 1000000,
+                    },
+                    {
+                        time: {
+                            startTime: '20:00',
+                            endTime: '23:00',
+                        },
+                        price: 700000,
+                    },
+                ],
             }
             panes.push(newTab)
             setPanes([...panes])
         },
+    }
+
+    const renderPrice = (prices) =>
+        prices.map(({ time: { startTime, endTime }, price }, index) => (
+            <p key={index}>
+                {`${startTime} - ${endTime}`}
+                {' || '}
+                <span
+                    style={{
+                        fontWeight: 'bold',
+                    }}
+                >
+                    {price}
+                </span>{' '}
+            </p>
+        ))
+
+    const handleEditPrice = () => {
+        setVisibleModalEditPrice(true)
     }
 
     const handleOnChange = (key) => {
@@ -121,14 +185,36 @@ function TabPitch({ pitchTypes }) {
                 onChange={handleOnChange}
                 onEdit={handleOnEdit}
             >
-                {panes.map(({ displayName, id, pitchs }) => (
+                {panes.map(({ displayName, id, pitchs, prices }) => (
                     <TabPane tab={displayName} key={id} closable={false}>
-                        {renderCard(pitchs)}
+                        <Row gutter={[8]}>
+                            <Col span={18}>{renderCard(pitchs)}</Col>
+                            <Col span={6}>
+                                <Card
+                                    title="Bảng giá"
+                                    style={{
+                                        borderRadius: 12,
+                                        minHeight: 200,
+                                        backgroundColor: '#92e1a082', // #d5d5d5
+                                    }}
+                                    extra={
+                                        <EditOutlined
+                                            key="price"
+                                            title="Sửa bảng giá"
+                                            onClick={handleEditPrice}
+                                        />
+                                    }
+                                >
+                                    {renderPrice(prices)}
+                                </Card>
+                            </Col>
+                        </Row>
                     </TabPane>
                 ))}
             </Tabs>
             {handleModalEdit()}
             {handleModalDelete()}
+            {handleModalEditPrice()}
         </>
     )
 }

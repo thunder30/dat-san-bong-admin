@@ -24,10 +24,6 @@ export default function Manager() {
                 <Link to="/pitch" />
                 Quản lý sân bóng
             </Menu.Item>
-            <Menu.Item key="price" icon={<DollarCircleOutlined />}>
-                <Link to="/price" />
-                Quản lý khung giá
-            </Menu.Item>
             <Menu.Item key="booking" icon={<BookOutlined />}>
                 <Link to="/booking" />
                 Quản lý phiếu đặt
