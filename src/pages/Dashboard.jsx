@@ -5,8 +5,7 @@ import DashboardLayout from '../layout/DashboardLayout'
 const body = (
     <DashboardLayout>
         <Row gutter={16}>
-            <Col span={12}>col-1</Col>
-            <Col span={12}>col-2</Col>
+            <Col span={24}>Dashboard</Col>
         </Row>
     </DashboardLayout>
 )

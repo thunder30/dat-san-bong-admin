@@ -21,7 +21,7 @@ export default function reducer(state = initialState, action) {
                 current: {
                     ...state.current,
                     branch: {
-                        id: _id || null,
+                        _id: _id || null,
                         displayName: displayName || null,
                     },
                 },

@@ -1,14 +1,15 @@
 import React from 'react'
-import { Col, Row } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
+import CrudUser from '../modules/CrudUser'
+import UserProvider from '../contexts/UserProvider'
 
 function Customer() {
     return (
-        <DashboardLayout>
-            <Row gutter={16}>
-                <Col span={24}>Customer</Col>
-            </Row>
-        </DashboardLayout>
+        <UserProvider>
+            <DashboardLayout>
+                <CrudUser role="customers" />
+            </DashboardLayout>
+        </UserProvider>
     )
 }
 

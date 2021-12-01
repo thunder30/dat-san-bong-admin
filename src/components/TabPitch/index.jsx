@@ -1,11 +1,22 @@
 import React, { useState } from 'react'
 import { Row, Col, Card, Modal, Tabs } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import {
+    EditOutlined,
+    DeleteOutlined,
+    PlusCircleOutlined,
+} from '@ant-design/icons'
 import styled from 'styled-components'
+
+import ModalForm from '../ModalForm'
+import PitchForm from '../Form/PitchForm'
+import toCommas from '../../helpers/toCommas'
 
 const { TabPane } = Tabs
 
 const CardStyled = styled(Card)`
+    text-align: center;
+    border-radius: 12px;
+
     .ant-card-actions {
         border-bottom-left-radius: 12px;
         border-bottom-right-radius: 12px;
@@ -15,10 +26,27 @@ const CardStyled = styled(Card)`
     }
 `
 
+const renderPrice = (prices) =>
+    prices.map(({ time: { startTime, endTime }, price }, index) => (
+        <p key={index}>
+            {`${startTime} - ${endTime}`}
+            {' || '}
+            <span
+                style={{
+                    fontWeight: 'bold',
+                }}
+            >
+                {toCommas(price)}
+            </span>{' '}
+        </p>
+    ))
+
 function TabPitch({ pitchTypes }) {
     const [panes, setPanes] = useState(pitchTypes)
+    const [pitchTypeId, setPitchTypeId] = useState(null)
     const [visibleModalDelete, setVisibleModalDelete] = useState(false)
     const [visibleModalEdit, setVisibleModalEdit] = useState(false)
+    const [visibleModalAddPitch, setVisibleModalAddPitch] = useState(false)
     const [visibleModalEditPrice, setVisibleModalEditPrice] = useState(false)
 
     const handleModalDelete = () => (
@@ -60,15 +88,43 @@ function TabPitch({ pitchTypes }) {
         </Modal>
     )
 
-    const renderCard = (pitchs) => (
+    /**
+     *
+     * @param {*} pitchTypeId
+     * @description Thêm sân theo loại sân: OpenModal -> Input -> Submit -> CloseModal -> re-render state
+     */
+    const handleAddPitch = ({ displayName, description }) => {
+        // info pitch
+        const pitch = {
+            displayName,
+            description,
+        }
+
+        const pitchType = panes.find(
+            (pitchType) => pitchType.id === pitchTypeId
+        )
+        //console.log(pitchType)
+
+        if (pitchType) {
+            pitchType.pitchs.push({
+                ...pitch,
+                _id: pitchType.pitchs.length + 1,
+            })
+            setPanes([...panes])
+        }
+        setVisibleModalAddPitch(false)
+    }
+
+    const renderCard = (pitchTypeId, pitchs) => (
         <Row gutter={[10]}>
             {pitchs.map(({ displayName, description }, index) => (
-                <Col span={8} style={{ margin: '6px 0' }} key={index}>
+                <Col
+                    className="gutter-row"
+                    span={8}
+                    key={index}
+                    style={{ margin: '6px 0' }}
+                >
                     <CardStyled
-                        style={{
-                            textAlign: 'center',
-                            borderRadius: 12,
-                        }}
                         hoverable
                         actions={[
                             <EditOutlined
@@ -95,6 +151,26 @@ function TabPitch({ pitchTypes }) {
                     </CardStyled>
                 </Col>
             ))}
+            {/* Icon thêm sân */}
+            <Col
+                span={8}
+                key="plus-pitch"
+                style={{
+                    minHeight: 180,
+                }}
+            >
+                <Row justify="center" align="middle" style={{ height: '100%' }}>
+                    <Col>
+                        <PlusCircleOutlined
+                            style={{ fontSize: 50, color: '#818181' }}
+                            onClick={() => {
+                                setPitchTypeId(pitchTypeId)
+                                setVisibleModalAddPitch(true)
+                            }}
+                        />
+                    </Col>
+                </Row>
+            </Col>
         </Row>
     )
 
@@ -107,7 +183,7 @@ function TabPitch({ pitchTypes }) {
             // console.log(`Add new tab`)
             const newTab = {
                 displayName: 'Sân 11 người',
-                id: panes.length + 1,
+                id: `pitchType-${panes.length + 1}`,
                 pitchs: [
                     {
                         displayName: 'Sân 11-1',
@@ -147,32 +223,18 @@ function TabPitch({ pitchTypes }) {
         },
     }
 
-    const renderPrice = (prices) =>
-        prices.map(({ time: { startTime, endTime }, price }, index) => (
-            <p key={index}>
-                {`${startTime} - ${endTime}`}
-                {' || '}
-                <span
-                    style={{
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {price}
-                </span>{' '}
-            </p>
-        ))
-
     const handleEditPrice = () => {
         setVisibleModalEditPrice(true)
     }
 
     const handleOnChange = (key) => {
-        // console.log(key)
+        console.log(key)
     }
 
     const handleOnEdit = (targetKey, action) => {
         //console.log(targetKey, action) // Action is remove or add
         actions[action](targetKey) // call function
+        console.log(action, targetKey)
     }
 
     return (
@@ -185,36 +247,51 @@ function TabPitch({ pitchTypes }) {
                 onChange={handleOnChange}
                 onEdit={handleOnEdit}
             >
-                {panes.map(({ displayName, id, pitchs, prices }) => (
-                    <TabPane tab={displayName} key={id} closable={false}>
-                        <Row gutter={[8]}>
-                            <Col span={18}>{renderCard(pitchs)}</Col>
-                            <Col span={6}>
-                                <Card
-                                    title="Bảng giá"
-                                    style={{
-                                        borderRadius: 12,
-                                        minHeight: 200,
-                                        backgroundColor: '#92e1a082', // #d5d5d5
-                                    }}
-                                    extra={
-                                        <EditOutlined
-                                            key="price"
-                                            title="Sửa bảng giá"
-                                            onClick={handleEditPrice}
-                                        />
-                                    }
-                                >
-                                    {renderPrice(prices)}
-                                </Card>
-                            </Col>
-                        </Row>
-                    </TabPane>
-                ))}
+                {panes.map(
+                    ({ displayName, id: pitchTypeId, pitchs, prices }) => (
+                        <TabPane
+                            tab={displayName}
+                            key={pitchTypeId}
+                            closable={true}
+                        >
+                            <Row gutter={[10]}>
+                                <Col className="gutter-row" span={18}>
+                                    {renderCard(pitchTypeId, pitchs)}
+                                </Col>
+                                <Col className="gutter-row" span={6}>
+                                    <CardStyled
+                                        title="Bảng giá"
+                                        style={{
+                                            minHeight: 200,
+                                            backgroundColor: '#92e1a082', // #d5d5d5
+                                            marginTop: 6,
+                                        }}
+                                        extra={
+                                            <EditOutlined
+                                                key="price"
+                                                title="Sửa bảng giá"
+                                                onClick={handleEditPrice}
+                                            />
+                                        }
+                                    >
+                                        {renderPrice(prices)}
+                                    </CardStyled>
+                                </Col>
+                            </Row>
+                        </TabPane>
+                    )
+                )}
             </Tabs>
             {handleModalEdit()}
             {handleModalDelete()}
             {handleModalEditPrice()}
+            <ModalForm
+                title="Thêm sân bóng"
+                visible={visibleModalAddPitch}
+                handleSubmit={handleAddPitch}
+                onCancel={() => setVisibleModalAddPitch(false)}
+                formElements={PitchForm}
+            />
         </>
     )
 }

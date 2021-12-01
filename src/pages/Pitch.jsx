@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import { Row, Col, Empty } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
-import SpinStyled from '../components/Spin'
 import TabPitch from '../components/TabPitch'
+import Loading from '../components/Loading'
 
 const pitches = {
     san5: [
@@ -69,21 +69,23 @@ function Pitch() {
         },
     } = useContext(OwnerContext)
 
-    if (isLoading) {
-        return <SpinStyled />
+    const Body = () => {
+        return !pitchTypes || pitchTypes.length === 0 ? (
+            <Empty />
+        ) : (
+            <TabPitch pitchTypes={pitchTypes || []} />
+        )
     }
 
     return (
         <DashboardLayout>
-            <Row gutter={[16]}>
-                <Col span={24}>
-                    {!pitchTypes || pitchTypes.length === 0 ? (
-                        <Empty />
-                    ) : (
-                        <TabPitch pitchTypes={pitchTypes || []} />
-                    )}
-                </Col>
-            </Row>
+            <Loading isLoading={isLoading}>
+                <Row gutter={[8]}>
+                    <Col className="gutter-row" span={24}>
+                        <Body />
+                    </Col>
+                </Row>
+            </Loading>
         </DashboardLayout>
     )
 }
