@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table } from 'antd'
 
-function DataTable({ columns, dataSource, isLoading }) {
+function DataTable({ columns, dataSource, isLoading, ...rest }) {
     const pagination = {
         defaultCurrent: 1,
         defaultPageSize: 5,

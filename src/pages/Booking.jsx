@@ -1,14 +1,16 @@
 import React from 'react'
-import { Col, Row } from 'antd'
+
 import DashboardLayout from '../layout/DashboardLayout'
+import BookingProvider from '../contexts/BookingProvider'
+import { Outlet } from 'react-router'
 
 function Booking() {
     return (
-        <DashboardLayout>
-            <Row gutter={16}>
-                <Col span={24}>Booking</Col>
-            </Row>
-        </DashboardLayout>
+        <BookingProvider>
+            <DashboardLayout>
+                <Outlet />
+            </DashboardLayout>
+        </BookingProvider>
     )
 }
 

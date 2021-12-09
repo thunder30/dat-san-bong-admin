@@ -6,7 +6,6 @@ import {
     BookOutlined,
     LineChartOutlined,
     SisternodeOutlined,
-    DollarCircleOutlined,
     SettingOutlined,
 } from '@ant-design/icons'
 

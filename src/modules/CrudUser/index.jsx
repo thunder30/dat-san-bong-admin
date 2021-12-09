@@ -1,7 +1,35 @@
-import { Badge } from 'antd'
 import React, { useContext } from 'react'
+import { Badge, Menu, Dropdown } from 'antd'
+import {
+    EllipsisOutlined,
+    EditOutlined,
+    DeleteOutlined,
+} from '@ant-design/icons'
 import DataTable from '../../components/DataTable'
 import { UserContext } from '../../contexts/UserProvider'
+
+const { Item } = Menu
+
+const menu = (key) => {
+    return (
+        <Menu>
+            <Item
+                key="0"
+                icon={<EditOutlined />}
+                onClick={() => console.log('Sửa - ', key)}
+            >
+                Sửa
+            </Item>
+            <Item
+                key="1"
+                icon={<DeleteOutlined />}
+                onClick={() => console.log('Xoá - ', key)}
+            >
+                Xoá
+            </Item>
+        </Menu>
+    )
+}
 
 const columns = [
     {
@@ -25,6 +53,7 @@ const columns = [
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
+        sorter: (a, b) => a.email - b.email,
     },
     {
         title: 'Ngày sinh',
@@ -61,6 +90,18 @@ const columns = [
             },
         ],
     },
+    {
+        title: ' ',
+        dataIndex: 'key',
+        key: 'actions',
+        align: 'center',
+        width: 70,
+        render: (key) => (
+            <Dropdown overlay={() => menu(key)} arrow>
+                <EllipsisOutlined />
+            </Dropdown>
+        ),
+    },
 ]
 
 function CrudUser({ role }) {
@@ -68,6 +109,10 @@ function CrudUser({ role }) {
         state: { customers, owners, isLoading },
     } = useContext(UserContext)
     const user = { customers, owners }
+    const title = {
+        customers: 'Danh sách khách hàng',
+        owners: 'Danh sách chủ sân',
+    }
     const dataSource = user[role].map(
         ({
             _id,
@@ -75,6 +120,7 @@ function CrudUser({ role }) {
             lastName,
             email,
             phone,
+            birthday,
             address,
             ward,
             district,
@@ -85,6 +131,7 @@ function CrudUser({ role }) {
             fullName: `${firstName} ${lastName}`,
             email,
             phone,
+            birthday,
             address,
             ward,
             district,
@@ -94,11 +141,14 @@ function CrudUser({ role }) {
     )
 
     return (
-        <DataTable
-            columns={columns}
-            dataSource={dataSource}
-            isLoading={isLoading}
-        />
+        <>
+            <h1>{title[role]}</h1>
+            <DataTable
+                columns={columns}
+                dataSource={dataSource}
+                isLoading={isLoading}
+            />
+        </>
     )
 }
 

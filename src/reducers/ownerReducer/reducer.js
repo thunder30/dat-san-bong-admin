@@ -11,10 +11,9 @@ export const initialState = {
 
 export default function reducer(state = initialState, action) {
     const { type, payload } = action
-
     switch (type) {
         case types.BRANCH_LOAD_SUCCESS:
-            const { _id, displayName } = payload[0]
+            const { _id, displayName } = payload[0] || []
             return {
                 ...state,
                 branches: payload,

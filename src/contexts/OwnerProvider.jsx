@@ -50,15 +50,15 @@ function OwnerProvider({ children }) {
         }
     }
 
-    const setCurrentBranch = async ({ id, displayName }) => {
+    const setCurrentBranch = async ({ _id, displayName }) => {
         dispatch({
             type: types.SET_CURRENT_BRANCH,
             payload: {
-                id,
+                _id,
                 displayName,
             },
         })
-        await findBranchById(id)
+        await findBranchById(_id)
     }
 
     useEffect(() => {

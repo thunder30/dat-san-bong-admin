@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form } from 'antd'
 
-function ModalForm({ title, visible, onCancel, formElements, handleSubmit }) {
+function ModalForm({ formElements, handleSubmit, ...props }) {
     const [form] = Form.useForm()
     const layout = {
         labelCol: {
@@ -13,11 +13,7 @@ function ModalForm({ title, visible, onCancel, formElements, handleSubmit }) {
     }
     return (
         <Modal
-            title={title}
-            visible={visible}
-            okText="Thêm mới"
-            cancelText="Huỷ bỏ"
-            onCancel={onCancel}
+            {...props}
             onOk={() => {
                 form.validateFields().then((values) => {
                     form.resetFields()

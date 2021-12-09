@@ -1,14 +1,21 @@
 import React from 'react'
-import { Row, Col } from 'antd'
 import DashboardLayout from '../layout/DashboardLayout'
+import AnalyticsModule from '../modules/AnalyticsModule'
+import AnalyticsProvider from '../contexts/AnalyticsProvider'
+
+/**
+ * @description Thống kê admin, chủ sân
+ *
+ * @returns
+ */
 
 function Analytics() {
     return (
-        <DashboardLayout>
-            <Row gutter={16}>
-                <Col span={24}>Analytics</Col>
-            </Row>
-        </DashboardLayout>
+        <AnalyticsProvider>
+            <DashboardLayout>
+                <AnalyticsModule />
+            </DashboardLayout>
+        </AnalyticsProvider>
     )
 }
 

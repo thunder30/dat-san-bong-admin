@@ -44,19 +44,23 @@ const renderPrice = (prices) =>
 function TabPitch({ pitchTypes }) {
     const [panes, setPanes] = useState(pitchTypes)
     const [pitchTypeId, setPitchTypeId] = useState(null)
-    const [visibleModalDelete, setVisibleModalDelete] = useState(false)
-    const [visibleModalEdit, setVisibleModalEdit] = useState(false)
+    const [pitchId, setPitchId] = useState(null)
+    const [visibleModalDeletePitch, setVisibleModalDeletePitch] =
+        useState(false)
+    const [visibleModalEditPitch, setVisibleModalEditPitch] = useState(false)
     const [visibleModalAddPitch, setVisibleModalAddPitch] = useState(false)
     const [visibleModalEditPrice, setVisibleModalEditPrice] = useState(false)
+
+    console.log(pitchId)
 
     const handleModalDelete = () => (
         <Modal
             title="Xoá sân bóng"
             okText="Đồng ý"
             cancelText="Huỷ bỏ"
-            visible={visibleModalDelete}
-            onOk={() => setVisibleModalDelete(false)}
-            onCancel={() => setVisibleModalDelete(false)}
+            visible={visibleModalDeletePitch}
+            onOk={() => setVisibleModalDeletePitch(false)}
+            onCancel={() => setVisibleModalDeletePitch(false)}
         >
             {'Hành động này sẽ không thể khôi phục'}
         </Modal>
@@ -67,9 +71,9 @@ function TabPitch({ pitchTypes }) {
             title="Sửa thông tin sân bóng"
             okText="Lưu"
             cancelText="Huỷ bỏ"
-            visible={visibleModalEdit}
-            onOk={() => setVisibleModalEdit(false)}
-            onCancel={() => setVisibleModalEdit(false)}
+            visible={visibleModalEditPitch}
+            onOk={() => setVisibleModalEditPitch(false)}
+            onCancel={() => setVisibleModalEditPitch(false)}
         >
             {'Thông tin sân bóng hiển thị ở đây'}
         </Modal>
@@ -106,18 +110,18 @@ function TabPitch({ pitchTypes }) {
         //console.log(pitchType)
 
         if (pitchType) {
-            pitchType.pitchs.push({
+            pitchType.pitches.push({
                 ...pitch,
-                _id: pitchType.pitchs.length + 1,
+                _id: pitchType.pitches.length + 1,
             })
             setPanes([...panes])
         }
         setVisibleModalAddPitch(false)
     }
 
-    const renderCard = (pitchTypeId, pitchs) => (
+    const renderCard = (pitchTypeId, pitches) => (
         <Row gutter={[10]}>
-            {pitchs.map(({ displayName, description }, index) => (
+            {pitches.map(({ _id, displayName, description }, index) => (
                 <Col
                     className="gutter-row"
                     span={8}
@@ -130,12 +134,15 @@ function TabPitch({ pitchTypes }) {
                             <EditOutlined
                                 key="edit"
                                 title="Sửa thông tin sân"
-                                onClick={() => setVisibleModalEdit(true)}
+                                onClick={() => {
+                                    setVisibleModalEditPitch(true)
+                                    setPitchId(_id)
+                                }}
                             />,
                             <DeleteOutlined
                                 key="delete"
                                 title="Xoá sân này"
-                                onClick={() => setVisibleModalDelete(true)}
+                                onClick={() => setVisibleModalDeletePitch(true)}
                             />,
                         ]}
                     >
@@ -184,7 +191,7 @@ function TabPitch({ pitchTypes }) {
             const newTab = {
                 displayName: 'Sân 11 người',
                 id: `pitchType-${panes.length + 1}`,
-                pitchs: [
+                pitches: [
                     {
                         displayName: 'Sân 11-1',
                         description: 'Sân bóng 11 người',
@@ -248,7 +255,7 @@ function TabPitch({ pitchTypes }) {
                 onEdit={handleOnEdit}
             >
                 {panes.map(
-                    ({ displayName, id: pitchTypeId, pitchs, prices }) => (
+                    ({ displayName, id: pitchTypeId, pitches, prices }) => (
                         <TabPane
                             tab={displayName}
                             key={pitchTypeId}
@@ -256,7 +263,7 @@ function TabPitch({ pitchTypes }) {
                         >
                             <Row gutter={[10]}>
                                 <Col className="gutter-row" span={18}>
-                                    {renderCard(pitchTypeId, pitchs)}
+                                    {renderCard(pitchTypeId, pitches)}
                                 </Col>
                                 <Col className="gutter-row" span={6}>
                                     <CardStyled
@@ -287,6 +294,8 @@ function TabPitch({ pitchTypes }) {
             {handleModalEditPrice()}
             <ModalForm
                 title="Thêm sân bóng"
+                okText="Thêm mới"
+                cancelText="Huỷ bỏ"
                 visible={visibleModalAddPitch}
                 handleSubmit={handleAddPitch}
                 onCancel={() => setVisibleModalAddPitch(false)}

@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useReducer } from 'react'
 import reducer, { initialState } from '../reducers/authReducer/reducer'
-import * as authService from '../core/services/auth'
 import * as types from '../reducers/authReducer/constants'
+import * as authService from '../core/services/auth'
 import { useNavigate } from 'react-router-dom'
 
 export const AuthContext = createContext()

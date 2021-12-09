@@ -17,7 +17,7 @@ function SelectBranch() {
 
     const handleOnChange = (value, { key }) => {
         setCurrentBranch({
-            id: key,
+            _id: key,
             displayName: value,
         })
         setValueSelected(value)
