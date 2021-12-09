@@ -3,11 +3,14 @@ import { Form, Input } from 'antd'
 
 const { Item } = Form
 
-function PitchForm({ value = { displayName: '', description: '' }, onChange }) {
+function PitchTypeForm({
+    value = { displayName: '', description: '' },
+    onChange,
+}) {
     return (
         <>
             <Item
-                label="Tên sân:"
+                label="Loại sân:"
                 name="displayName"
                 rules={[
                     {
@@ -33,4 +36,4 @@ function PitchForm({ value = { displayName: '', description: '' }, onChange }) {
     )
 }
 
-export default PitchForm
+export default PitchTypeForm

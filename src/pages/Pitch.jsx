@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { Row, Col, Empty } from 'antd'
+import { PlusCircleOutlined } from '@ant-design/icons'
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
 import TabPitch from '../components/TabPitch'
@@ -65,15 +66,31 @@ function Pitch() {
     const {
         state: {
             isLoading,
-            current: { pitchTypes },
+            current: { pitchTypes, branch },
         },
     } = useContext(OwnerContext)
 
+    console.log(pitchTypes, branch)
+
     const Body = () => {
         return !pitchTypes || pitchTypes.length === 0 ? (
-            <Empty />
+            <Row>
+                <Col span={6} style={{ textAlign: 'center' }}>
+                    <PlusCircleOutlined
+                        style={{ fontSize: 50, color: '#818181' }}
+                        onClick={() => {
+                            //setPitchType(pitchTypeId)
+                            //setVisibleModalAddPitch(true)
+                        }}
+                    />
+                    <h3>Tạo sân</h3>
+                </Col>
+                <Col span={18}>
+                    <Empty />
+                </Col>
+            </Row>
         ) : (
-            <TabPitch pitchTypes={pitchTypes || []} />
+            <TabPitch pitchTypes={pitchTypes || []} branch={branch} />
         )
     }
 

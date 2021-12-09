@@ -17,7 +17,7 @@ const columnSingleBranch = [
         dataIndex: 'total',
         align: 'center',
         render: (total) => {
-            return <b>{toCommas(total) + ' VND'}</b>
+            return <b>{toCommas(total || 0) + ' VND'}</b>
         },
     },
 ]

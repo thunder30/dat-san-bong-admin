@@ -1,11 +1,15 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Tag } from 'antd'
+import { Tag, Row, Col, Form, Input, Button, notification } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
+
 import DataTable from '../../components/DataTable'
 import { BookingContext } from '../../contexts/BookingProvider'
 import { AuthContext } from '../../contexts/AuthProvider'
 import toCommas from '../../helpers/toCommas'
+import * as apiBooking from '../../core/services/booking'
+
+const { Item } = Form
 
 const columnBookings = [
     {
@@ -73,6 +77,7 @@ const columnForAdmin = {
 }
 
 function CrudBranch() {
+    const [form] = Form.useForm()
     const {
         bookingState: { bookings, isLoading },
     } = useContext(BookingContext)
@@ -80,6 +85,8 @@ function CrudBranch() {
         authState: { user },
     } = useContext(AuthContext)
 
+    const [code, setCode] = useState('')
+    console.log(`code checkin: `, code)
     const dataSource = bookings.map(
         ({
             _id,
@@ -111,15 +118,77 @@ function CrudBranch() {
         }
     }, [user.isAdmin])
 
+    const handleOnChange = (e) => {
+        e.preventDefault()
+        setCode(e.target.value)
+    }
+
+    const handleOnFinish = async ({ code }) => {
+        console.log(code)
+        form.resetFields()
+        const data = await apiBooking.checkinBooking(code.trim())
+        if (data.success) {
+            notification.success({
+                duration: 5,
+                messsage: 'Checkin thành công!',
+            })
+        }
+        setCode('')
+    }
+
     return (
-        <>
-            <h1>{'Danh sách phiếu đặt sân'}</h1>
-            <DataTable
-                columns={columnBookings}
-                dataSource={dataSource}
-                isLoading={isLoading}
-            />
-        </>
+        <Row gutter={[16, 24]}>
+            <Col span={24}>
+                <Form
+                    form={form}
+                    initialValues={{
+                        checkin: '',
+                    }}
+                    onFinish={handleOnFinish}
+                >
+                    <Row gutter={[8, 0]}>
+                        <Col span={4}>
+                            <Item
+                                name={'code'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập trường này',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    name="code"
+                                    size="middle"
+                                    value={code}
+                                    onChange={handleOnChange}
+                                    placeholder="Nhập code checkin"
+                                />
+                            </Item>
+                        </Col>
+                        <Col span={4}>
+                            <Item>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    size="middle"
+                                >
+                                    Check in
+                                </Button>
+                            </Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </Col>
+            <Col span={24}>
+                <h1>{'Danh sách phiếu đặt sân'}</h1>
+                <DataTable
+                    columns={columnBookings}
+                    dataSource={dataSource}
+                    isLoading={isLoading}
+                />
+            </Col>
+        </Row>
     )
 }
 

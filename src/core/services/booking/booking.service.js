@@ -31,4 +31,16 @@ const findBookingByPitchBranchId = async (pitchBranchId) => {
     }
 }
 
-export { findBooking, findBookingByPitchBranchId }
+const checkinBooking = async (code) => {
+    const accessToken = token.get()
+    setHeaderToken(accessToken)
+
+    try {
+        const res = await axios.put(API_BASE_URL + '/booking/checkin/' + code)
+        return successHandler(res)
+    } catch (error) {
+        return errorHandler(error)
+    }
+}
+
+export { findBooking, findBookingByPitchBranchId, checkinBooking }

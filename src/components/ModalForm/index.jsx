@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, Form } from 'antd'
 
-function ModalForm({ formElements, handleSubmit, ...props }) {
+function ModalForm({ children, handleSubmit, onCancel, ...props }) {
     const [form] = Form.useForm()
     const layout = {
         labelCol: {
@@ -20,9 +20,13 @@ function ModalForm({ formElements, handleSubmit, ...props }) {
                     handleSubmit(values)
                 })
             }}
+            onCancel={() => {
+                form.resetFields()
+                onCancel()
+            }}
         >
             <Form {...layout} form={form} name="form_in_modal">
-                {formElements}
+                {children}
             </Form>
         </Modal>
     )
