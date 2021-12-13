@@ -14,7 +14,7 @@ const successHandler = (response) => {
                 duration: 5,
             })
             notification.error({
-                message: `Request error ${status}`,
+                //message: `Request error ${status}`,
                 description: errorText,
             })
         }
