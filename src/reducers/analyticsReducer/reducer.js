@@ -20,6 +20,11 @@ export default function reducer(state = initialState, action) {
                 ...state,
                 isLoading: false,
             }
+        case types.SET_LOADING:
+            return {
+                ...state,
+                isLoading: payload,
+            }
         default:
             return { ...state }
     }

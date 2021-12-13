@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { Row, Col, Empty } from 'antd'
-import { PlusCircleOutlined } from '@ant-design/icons'
 import DashboardLayout from '../layout/DashboardLayout'
 import { OwnerContext } from '../contexts/OwnerProvider'
 import TabPitch from '../components/TabPitch'
 import Loading from '../components/Loading'
+import CrudPitchType from '../modules/CrudPitchType'
 
 const pitches = {
     san5: [
@@ -62,6 +62,22 @@ const pitchTypesDemo = [
     },
 ]
 
+const body = (pitchTypes, branch) => {
+    return !pitchTypes || pitchTypes.length === 0 ? (
+        <Row>
+            <Col span={24} style={{ textAlign: 'center' }}>
+                <CrudPitchType branch={branch} />
+                <h3>Tạo sân</h3>
+            </Col>
+            {/* <Col span={18}>
+                <Empty />
+            </Col> */}
+        </Row>
+    ) : (
+        <TabPitch pitchTypes={pitchTypes || []} branch={branch} />
+    )
+}
+
 function Pitch() {
     const {
         state: {
@@ -70,36 +86,14 @@ function Pitch() {
         },
     } = useContext(OwnerContext)
 
-    console.log(pitchTypes, branch)
-
-    const Body = () => {
-        return !pitchTypes || pitchTypes.length === 0 ? (
-            <Row>
-                <Col span={6} style={{ textAlign: 'center' }}>
-                    <PlusCircleOutlined
-                        style={{ fontSize: 50, color: '#818181' }}
-                        onClick={() => {
-                            //setPitchType(pitchTypeId)
-                            //setVisibleModalAddPitch(true)
-                        }}
-                    />
-                    <h3>Tạo sân</h3>
-                </Col>
-                <Col span={18}>
-                    <Empty />
-                </Col>
-            </Row>
-        ) : (
-            <TabPitch pitchTypes={pitchTypes || []} branch={branch} />
-        )
-    }
+    //console.log(pitchTypes, branch)
 
     return (
         <DashboardLayout>
             <Loading isLoading={isLoading}>
                 <Row gutter={[8]}>
                     <Col className="gutter-row" span={24}>
-                        <Body />
+                        {body(pitchTypes, branch)}
                     </Col>
                 </Row>
             </Loading>

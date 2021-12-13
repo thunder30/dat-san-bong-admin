@@ -16,7 +16,6 @@ import Pitch from '../pages/Pitch'
 import Booking from '../pages/Booking'
 import BookingDetail from '../pages/BookingDetail'
 import Profile from '../pages/Profile'
-import Price from '../pages/Price'
 import Setting from '../pages/Setting'
 
 import CrudBooking from '../modules/CrudBooking'
@@ -29,7 +28,6 @@ function AppRouter() {
                 <Route path="/" element={<OwnerRoute />}>
                     <Route index element={<DashboardOwner />} />
                     <Route path="pitch" element={<Pitch />} />
-                    <Route path="price" element={<Price />} />
                     <Route path="booking" element={<Booking />}>
                         <Route index element={<CrudBooking />} />
                         <Route path=":id" element={<BookingDetail />} />

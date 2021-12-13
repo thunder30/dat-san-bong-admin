@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import moment from 'moment'
 import DataTable from '../../components/DataTable'
-import Spin from '../../components/Spin'
+import DateTimePicker from '../../components/DateTimePicker'
 import { AnalyticsContext } from '../../contexts/AnalyticsProvider'
 import { AuthContext } from '../../contexts/AuthProvider'
 import { OwnerContext } from '../../contexts/OwnerProvider'
@@ -55,8 +56,8 @@ function AnalyticsModule() {
     const ownerState = useContext(OwnerContext)
 
     const [date, setDate] = useState({
-        startDate: '12/11/2020',
-        endDate: '12/11/2023',
+        startDate: moment().subtract(1, 'month'),
+        endDate: moment(),
     })
 
     // console.log(branch)
@@ -66,31 +67,56 @@ function AnalyticsModule() {
         ? branches.map((branch, index) => ({ ...branch, key: index }))
         : [branch]
 
-    console.log(dataSource)
+    //console.log(dataSource)
+    console.log(date)
+
+    const handleOnChange = (date, dateString) => {
+        console.log(date, dateString)
+        if (date) {
+            //const rangeDate = date.map((moment) => moment)
+            //console.log(rangeDate)
+            setDate({
+                startDate: date[0],
+                endDate: date[1],
+            })
+        }
+    }
 
     useEffect(() => {
-        console.log(`run useEffect analytics`)
+        console.log(`run useEffect analytics admin`)
         const { startDate, endDate } = date
         if (user.isAdmin) {
-            getAnalyticsAllBranch(startDate, endDate)
-        } else {
-            if (ownerState) {
-                const {
-                    state: {
-                        current: {
-                            branch: { _id },
-                        },
-                    },
-                } = ownerState
-                console.log(_id)
-                if (_id) getAnalyticsAsBranch(startDate, endDate, _id)
+            getAnalyticsAllBranch(
+                startDate.format('DD/MM/YYYY'),
+                endDate.format('DD/MM/YYYY')
+            )
+        }
+    }, [user, date])
+
+    useEffect(() => {
+        console.log(`run useEffect analytics owner`)
+
+        if (!user.isAdmin) {
+            const { startDate, endDate } = date
+            const { state } = ownerState
+            if (state) {
+                const _id = state?.current?.branch?._id
+                if (_id)
+                    getAnalyticsAsBranch(
+                        startDate.format('DD/MM/YYYY'),
+                        endDate.format('DD/MM/YYYY'),
+                        _id
+                    )
             }
         }
-    }, [ownerState.state.current.branch._id])
+    }, [ownerState, date])
 
     return (
         <>
             <h1>Thống kê doanh thu</h1>
+            <div style={{ margin: '20px 0' }}>
+                <DateTimePicker rangeDate={date} onChange={handleOnChange} />
+            </div>
             <DataTable
                 columns={columns}
                 dataSource={dataSource}

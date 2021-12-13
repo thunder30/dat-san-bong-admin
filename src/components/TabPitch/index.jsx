@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Row, Col, Card, Modal, Tabs, notification } from 'antd'
+import { Row, Col, Card, Modal, Tabs, Switch, notification } from 'antd'
 import {
     EditOutlined,
     DeleteOutlined,
@@ -11,7 +11,7 @@ import * as apiPitch from '../../core/services/pitch'
 import ModalForm from '../ModalForm'
 import PitchForm from '../Form/PitchForm'
 import PitchTypeForm from '../Form/PitchTypeForm'
-import toCommas from '../../helpers/toCommas'
+import CrudPrice from '../../modules/CrudPrice'
 
 const { TabPane } = Tabs
 
@@ -66,21 +66,6 @@ const CardStyled = styled(Card)`
         padding: 16px;
     }
 `
-
-const renderPrice = (prices) =>
-    prices.map(({ time: { startTime, endTime }, price }, index) => (
-        <p key={index}>
-            {`${startTime} - ${endTime}`}
-            {' || '}
-            <span
-                style={{
-                    fontWeight: 'bold',
-                }}
-            >
-                {toCommas(price)}
-            </span>{' '}
-        </p>
-    ))
 
 const handleModalDeletePitch = (visible, onOk, onCancel) => (
     <Modal
@@ -149,59 +134,103 @@ function TabPitch({ pitchTypes, branch }) {
     const [visibleModalEditPrice, setVisibleModalEditPrice] = useState(false)
 
     // console.log(currentPitchType)
-    console.log(pitchType)
+    //console.log(pitchType)
     //console.log(pitch)
+
+    const handleActivePitch = async (pitchTypeId, pitchId, checked) => {
+        // call api update pitch
+        console.log(`change active pitch ${pitchId} - ${checked}`)
+        const pitch = {
+            _id: pitchId,
+            isActive: checked,
+        }
+        const data = await apiPitch.updatePitch(pitch)
+        if (data.success) {
+            const pitchType = panes.find(({ _id }) => _id === pitchTypeId)
+            const pitchIndex = pitchType.pitches.findIndex(
+                ({ _id }) => _id === pitchId
+            )
+            pitchType.pitches[pitchIndex] = {
+                ...pitchType.pitches[pitchIndex],
+                isActive: checked,
+            }
+            setPitch({ ...pitch })
+        }
+        //console.log(data)
+    }
 
     const renderCard = (pitchTypeId, pitches) => (
         <Row gutter={[10]}>
-            {pitches.map(({ _id, displayName, description }, index) => (
-                <Col
-                    className="gutter-row"
-                    span={8}
-                    key={_id}
-                    style={{ margin: '6px 0' }}
-                >
-                    <CardStyled
-                        hoverable
-                        actions={[
-                            <EditOutlined
-                                key="edit"
-                                title="Sửa thông tin sân"
-                                onClick={() => {
-                                    setVisibleModalEditPitch(true)
-                                    setPitch({
-                                        _id,
-                                        displayName,
-                                        description,
-                                    })
-                                }}
-                            />,
-                            <DeleteOutlined
-                                key="delete"
-                                title="Xoá sân này"
-                                onClick={() => {
-                                    setVisibleModalDeletePitch(true)
-                                    setPitch({
-                                        _id,
-                                        displayName,
-                                        description,
-                                    })
-                                }}
-                            />,
-                        ]}
+            {pitches.map(
+                ({ _id, displayName, description, isActive }, index) => (
+                    <Col
+                        className="gutter-row"
+                        span={8}
+                        key={_id}
+                        style={{ margin: '6px 0' }}
                     >
-                        <h3>{displayName}</h3>
-
-                        <p
-                            style={{
-                                minHeight: 50,
-                            }}
+                        <CardStyled
+                            hoverable
+                            style={
+                                !isActive
+                                    ? {
+                                          backgroundColor: '#c3c3c3',
+                                          filter: 'opacity(0.5)',
+                                      }
+                                    : {}
+                            }
+                            actions={[
+                                <EditOutlined
+                                    key="edit"
+                                    title="Sửa thông tin sân"
+                                    onClick={() => {
+                                        setVisibleModalEditPitch(true)
+                                        setPitch({
+                                            _id,
+                                            displayName,
+                                            description,
+                                        })
+                                    }}
+                                />,
+                                <DeleteOutlined
+                                    key="delete"
+                                    title="Xoá sân này"
+                                    onClick={() => {
+                                        setVisibleModalDeletePitch(true)
+                                        setPitch({
+                                            _id,
+                                            displayName,
+                                            description,
+                                        })
+                                    }}
+                                />,
+                            ]}
+                            extra={
+                                <Switch
+                                    defaultChecked={isActive}
+                                    onChange={(checked) => {
+                                        handleActivePitch(
+                                            pitchTypeId,
+                                            _id,
+                                            checked
+                                        )
+                                    }}
+                                />
+                            }
                         >
-                            {description}
-                        </p>
-                    </CardStyled>
-                </Col>
-            ))}
+                            <h3>{displayName}</h3>
+
+                            <p
+                                style={{
+                                    minHeight: 50,
+                                }}
+                            >
+                                {description}
+                            </p>
+                        </CardStyled>
+                    </Col>
+                )
+            )}
             {/* Icon thêm sân */}
             <Col
                 span={8}
@@ -421,25 +450,7 @@ function TabPitch({ pitchTypes, branch }) {
                                 <Col className="gutter-row" span={18}>
                                     {renderCard(_id, pitches)}
                                 </Col>
-                                <Col className="gutter-row" span={6}>
-                                    <CardStyled
-                                        title="Bảng giá"
-                                        style={{
-                                            minHeight: 200,
-                                            backgroundColor: '#92e1a082', // #d5d5d5
-                                            marginTop: 6,
-                                        }}
-                                        extra={
-                                            <EditOutlined
-                                                key="price"
-                                                title="Sửa bảng giá"
-                                                onClick={handleEditPrice}
-                                            />
-                                        }
-                                    >
-                                        {renderPrice(prices)}
-                                    </CardStyled>
-                                </Col>
+                                <CrudPrice prices={prices} />
                             </Row>
                         </TabPane>
                     )

@@ -25,7 +25,7 @@ const DropdownMenu = (isAdmin) => (
 function HeaderContent() {
     const {
         authState: {
-            user: { isAdmin },
+            user: { isAdmin, avatar },
         },
     } = useContext(AuthContext)
 
@@ -45,7 +45,7 @@ function HeaderContent() {
             >
                 <Avatar
                     icon={<UserOutlined />}
-                    src={avatarMrsThree}
+                    src={avatar}
                     size="large"
                     style={{ marginBottom: 15 }}
                 />

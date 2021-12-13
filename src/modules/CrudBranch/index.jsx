@@ -101,11 +101,14 @@ function CrudBranch() {
     )
 
     return (
-        <DataTable
-            columns={columns}
-            dataSource={dataSource}
-            isLoading={isLoading}
-        />
+        <>
+            <h1>Danh sách chi nhánh</h1>
+            <DataTable
+                columns={columns}
+                dataSource={dataSource}
+                isLoading={isLoading}
+            />
+        </>
     )
 }
 

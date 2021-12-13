@@ -23,9 +23,11 @@ const findBranchById = async (id) => {
     const accessToken = token.get()
     setHeaderToken(accessToken)
 
+    //const urlOld = `/pitchbranch/getDetail/`
+
     try {
         const res = await axios.get(
-            API_BASE_URL + '/pitchbranch/getDetail/' + id
+            API_BASE_URL + '/pitchbranch/getDetailOwner/' + id
         )
         return successHandler(res)
     } catch (error) {

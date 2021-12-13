@@ -9,6 +9,11 @@ import convertStringToDate from '../helpers/convertStringToDate'
 
 const columns = [
     {
+        title: 'Chi tiết phiếu',
+        dataIndex: 'bookingDetailId',
+        align: 'center',
+    },
+    {
         title: 'Sân',
         dataIndex: 'pitchName',
         align: 'center',
@@ -80,6 +85,7 @@ function BookingDetail() {
             price,
         }) => ({
             key: _id,
+            bookingDetailId: _id,
             pitchName,
             pitchTypeName,
             status:

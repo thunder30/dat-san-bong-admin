@@ -76,6 +76,53 @@ const columnForAdmin = {
     width: 200,
 }
 
+const CheckinComponent = ({ form, code, onFinish, onChange }) => {
+    return (
+        <Col span={24}>
+            <Form
+                form={form}
+                initialValues={{
+                    checkin: '',
+                }}
+                onFinish={onFinish}
+            >
+                <Row gutter={[8, 0]}>
+                    <Col span={4}>
+                        <Item
+                            name={'code'}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập trường này',
+                                },
+                            ]}
+                        >
+                            <Input
+                                name="code"
+                                size="middle"
+                                value={code}
+                                onChange={onChange}
+                                placeholder="Nhập code checkin"
+                            />
+                        </Item>
+                    </Col>
+                    <Col span={4}>
+                        <Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                size="middle"
+                            >
+                                Check in
+                            </Button>
+                        </Item>
+                    </Col>
+                </Row>
+            </Form>
+        </Col>
+    )
+}
+
 function CrudBranch() {
     const [form] = Form.useForm()
     const {
@@ -86,7 +133,7 @@ function CrudBranch() {
     } = useContext(AuthContext)
 
     const [code, setCode] = useState('')
-    console.log(`code checkin: `, code)
+    //console.log(`code checkin: `, code)
     const dataSource = bookings.map(
         ({
             _id,
@@ -133,53 +180,19 @@ function CrudBranch() {
                 messsage: 'Checkin thành công!',
             })
         }
-        setCode('')
+        // setCode('')
     }
 
     return (
         <Row gutter={[16, 24]}>
-            <Col span={24}>
-                <Form
+            {!user.isAdmin && (
+                <CheckinComponent
                     form={form}
-                    initialValues={{
-                        checkin: '',
-                    }}
+                    code={code}
+                    onChange={handleOnChange}
                     onFinish={handleOnFinish}
-                >
-                    <Row gutter={[8, 0]}>
-                        <Col span={4}>
-                            <Item
-                                name={'code'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập trường này',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    name="code"
-                                    size="middle"
-                                    value={code}
-                                    onChange={handleOnChange}
-                                    placeholder="Nhập code checkin"
-                                />
-                            </Item>
-                        </Col>
-                        <Col span={4}>
-                            <Item>
-                                <Button
-                                    type="primary"
-                                    htmlType="submit"
-                                    size="middle"
-                                >
-                                    Check in
-                                </Button>
-                            </Item>
-                        </Col>
-                    </Row>
-                </Form>
-            </Col>
+                />
+            )}
             <Col span={24}>
                 <h1>{'Danh sách phiếu đặt sân'}</h1>
                 <DataTable

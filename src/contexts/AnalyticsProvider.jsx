@@ -11,6 +11,10 @@ function AnalyticsProvider({ children }) {
     console.log(`analytics: `, analyticsState)
 
     const getAnalyticsAsBranch = async (startDate, endDate, pitchBranchId) => {
+        dispatch({
+            type: types.SET_LOADING,
+            payload: true,
+        })
         const data = await services.getAnalyticsAsBranch(
             startDate,
             endDate,
@@ -33,6 +37,10 @@ function AnalyticsProvider({ children }) {
     }
 
     const getAnalyticsAllBranch = async (startDate, endDate) => {
+        dispatch({
+            type: types.SET_LOADING,
+            payload: true,
+        })
         const data = await services.getAnalyticsAllBranch(startDate, endDate)
         if (data.success) {
             dispatch({
