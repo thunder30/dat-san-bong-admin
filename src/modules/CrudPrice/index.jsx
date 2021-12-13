@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
-import { Col, Card, Modal, Table, Space, Divider } from 'antd'
+import { Col, Card, Modal } from 'antd'
 import styled from 'styled-components'
-import {
-    DeleteOutlined,
-    EditOutlined,
-    PlusCircleOutlined,
-} from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import toCommas from '../../helpers/toCommas'
-import ModalForm from '../../components/ModalForm'
+import FormTable from '../../components/FormTable'
 
 const CardStyled = styled(Card)`
     text-align: center;
@@ -37,24 +33,52 @@ const renderPrice = (prices) =>
         </p>
     ))
 
-const renderDataSource = (prices) => {
-    return prices.map(({ time: { startTime, endTime }, price }, index) => ({
-        key: index,
-        startTime,
-        endTime,
-        price,
-    }))
-}
+const columns = [
+    {
+        title: 'Từ',
+        dataIndex: 'startTime',
+        align: 'center',
+    },
+    {
+        title: 'Đến',
+        dataIndex: 'endTime',
+        align: 'center',
+    },
+    {
+        title: 'Giá',
+        dataIndex: 'price',
+        align: 'center',
+        render: (price) => {
+            return <b>{toCommas(price)}</b>
+        },
+    },
+    // render: (key) => (
+    //     <Space split={<Divider type="vertical" />}>
+    //         <EditOutlined
+    //             key="edit-price"
+    //             title="Sửa"
+    //             style={{
+    //                 color: '#ababab',
+    //             }}
+    //             onClick={() => handleEditPrice(key)}
+    //         />
+    //         <DeleteOutlined
+    //             key="delete-price"
+    //             title="Xoá"
+    //             style={{
+    //                 color: '#ababab',
+    //             }}
+    //             onClick={() => handleDeletePrice(key)}
+    //         />
+    //     </Space>
+    // ),
+]
 
 function CrudPrice({ prices }) {
     const [visible, setVisible] = useState(false)
-    const handleEditPrice = () => {
-        setVisible(true)
-    }
     const handleSubmitPrice = () => {
         setVisible(false)
     }
-    //console.log(prices)
     return (
         <>
             <Col className="gutter-row" span={6}>
@@ -69,7 +93,7 @@ function CrudPrice({ prices }) {
                         <EditOutlined
                             key="price"
                             title="Sửa bảng giá"
-                            onClick={handleEditPrice}
+                            onClick={() => setVisible(true)}
                         />
                     }
                 >
@@ -81,73 +105,7 @@ function CrudPrice({ prices }) {
                 onOk={handleSubmitPrice}
                 onCancel={() => setVisible(false)}
             >
-                <Table
-                    size="small"
-                    columns={[
-                        {
-                            title: 'Từ',
-                            dataIndex: 'startTime',
-                            align: 'center',
-                        },
-                        {
-                            title: 'Đến',
-                            dataIndex: 'endTime',
-                            align: 'center',
-                        },
-                        {
-                            title: 'Giá',
-                            dataIndex: 'price',
-                            align: 'center',
-                            render: (price) => {
-                                return <b>{toCommas(price)}</b>
-                            },
-                        },
-                        {
-                            title: '',
-                            dataIndex: 'key',
-                            align: 'center',
-                            render: (key) => (
-                                <Space split={<Divider type="vertical" />}>
-                                    <EditOutlined
-                                        key="edit-price"
-                                        title="Sửa"
-                                        style={{
-                                            color: '#ababab',
-                                        }}
-                                        onClick={() =>
-                                            console.log(`Sửa dòng ${key}`)
-                                        }
-                                    />
-                                    <DeleteOutlined
-                                        key="delete-price"
-                                        title="Xoá"
-                                        style={{
-                                            color: '#ababab',
-                                        }}
-                                        onClick={() =>
-                                            console.log(`Xoá dòng ${key}`)
-                                        }
-                                    />
-                                </Space>
-                            ),
-                        },
-                    ]}
-                    dataSource={
-                        // !prices || prices.length === 0 ? (
-                        //     <PlusCircleOutlined
-                        //         style={{
-                        //             size: 30,
-                        //             color: '#818181',
-                        //         }}
-                        //         onClick={() => console.log(`Tạo mới giá`)}
-                        //     />
-                        // ) : (
-                        //     renderDataSource(prices)
-                        // )
-                        renderDataSource(prices)
-                    }
-                    pagination={false}
-                />
+                <FormTable columns={columns} prices={prices} />
             </Modal>
         </>
     )
