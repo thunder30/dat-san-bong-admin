@@ -5,18 +5,19 @@ const successHandler = (response) => {
     const { data } = response
     if (!data.success) {
         const message = data && data.message
-        const errorText =
-            message ||
-            (401 === response.status ? '' : codeMessage[response.status])
         const { status } = response
+        const errorText = message || codeMessage[status]
         //console.log(`success handler: `, response)
-        notification.config({
-            duration: 5,
-        })
-        notification.error({
-            message: `Request error ${status}`,
-            description: errorText,
-        })
+
+        if (status !== 401 && status !== 403) {
+            notification.config({
+                duration: 5,
+            })
+            notification.error({
+                message: `Request error ${status}`,
+                description: errorText,
+            })
+        }
     }
     return data
 }

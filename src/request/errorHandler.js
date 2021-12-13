@@ -23,11 +23,11 @@ const errorHandler = (error) => {
         const status = response.status
         const message = response.data && response.data.message
         const errorText = message || codeMessage[status]
-
-        notification.error({
-            message: `Request error ${status}`,
-            description: errorText,
-        })
+        if (status !== 401 && status !== 403)
+            notification.error({
+                message: `Request error ${status}`,
+                description: errorText,
+            })
         return response.data
     } else {
         notification.error({
