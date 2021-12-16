@@ -13,7 +13,7 @@ export default function reducer(state = initialState, action) {
     const { type, payload } = action
     switch (type) {
         case types.BRANCH_LOAD_SUCCESS:
-            const { _id, displayName } = payload[0] || []
+            const { _id, displayName, startTime, endTime } = payload[0] || []
             return {
                 ...state,
                 branches: payload,
@@ -22,6 +22,8 @@ export default function reducer(state = initialState, action) {
                     branch: {
                         _id: _id || null,
                         displayName: displayName || null,
+                        startTime,
+                        endTime,
                     },
                 },
                 isLoading: false,

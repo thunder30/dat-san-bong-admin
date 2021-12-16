@@ -18,6 +18,14 @@ const CardStyled = styled(Card)`
     }
 `
 
+const ModalStyled = styled(Modal)`
+    overflow-y: initial !important;
+    .ant-modal-body {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+`
+
 const renderPrice = (prices) =>
     prices.map(({ time: { startTime, endTime }, price }, index) => (
         <p key={index}>
@@ -100,13 +108,13 @@ function CrudPrice({ prices }) {
                     {renderPrice(prices)}
                 </CardStyled>
             </Col>
-            <Modal
+            <ModalStyled
                 visible={visible}
                 onOk={handleSubmitPrice}
                 onCancel={() => setVisible(false)}
             >
                 <FormTable columns={columns} prices={prices} />
-            </Modal>
+            </ModalStyled>
         </>
     )
 }
