@@ -450,7 +450,7 @@ function TabPitch({ pitchTypes, branch }) {
                                 <Col className="gutter-row" span={18}>
                                     {renderCard(_id, pitches)}
                                 </Col>
-                                <CrudPrice prices={prices} />
+                                <CrudPrice prices={prices} pitchTypeId={_id} />
                             </Row>
                         </TabPane>
                     )

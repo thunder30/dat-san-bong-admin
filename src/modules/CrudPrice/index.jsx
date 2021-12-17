@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
-import { Col, Card, Modal } from 'antd'
+import React, { useContext, useState } from 'react'
+import { Col, Card, Modal, notification } from 'antd'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
 import toCommas from '../../helpers/toCommas'
 import FormTable from '../../components/FormTable'
+import { OwnerContext } from '../../contexts/OwnerProvider'
+import { getRangeTime } from '../../helpers/convert'
 
 const CardStyled = styled(Card)`
     text-align: center;
@@ -82,10 +84,53 @@ const columns = [
     // ),
 ]
 
-function CrudPrice({ prices }) {
+const checkRangeTime = (rangeTime, data) => {
+    const operations = []
+    rangeTime.forEach(() => {
+        operations.push(false)
+    })
+    data.forEach(({ startTime, endTime }) => {
+        const range = getRangeTime(startTime, endTime)
+
+        //console.log(range)
+        range.forEach((time) => {
+            const index = rangeTime.indexOf(time)
+            if (index !== -1) operations[index] = true
+        })
+    })
+    console.log(operations)
+    console.log(rangeTime, data)
+    return operations.every((item) => {
+        return item
+    })
+}
+
+function CrudPrice({ prices, pitchTypeId }) {
     const [visible, setVisible] = useState(false)
-    const handleSubmitPrice = () => {
-        setVisible(false)
+    const [isSubmit, setIsSubmit] = useState(false)
+    const {
+        state: {
+            current: { branch },
+        },
+    } = useContext(OwnerContext)
+    const [rangeTime, setRangeTime] = useState(
+        getRangeTime(branch.startTime, branch.endTime)
+    )
+    const handleSubmitPrice = (data) => {
+        // kiem tra
+        const rs = checkRangeTime(rangeTime, data)
+
+        if (rs) {
+            // call api
+            console.log(`call api`)
+            setVisible(false)
+            setIsSubmit(false)
+        } else {
+            notification.error({
+                duration: 10,
+                description: 'Vui lòng cập nhật tất cả thời gian còn lại!',
+            })
+        }
     }
     return (
         <>
@@ -101,7 +146,9 @@ function CrudPrice({ prices }) {
                         <EditOutlined
                             key="price"
                             title="Sửa bảng giá"
-                            onClick={() => setVisible(true)}
+                            onClick={() => {
+                                setVisible(true)
+                            }}
                         />
                     }
                 >
@@ -110,10 +157,19 @@ function CrudPrice({ prices }) {
             </Col>
             <ModalStyled
                 visible={visible}
-                onOk={handleSubmitPrice}
-                onCancel={() => setVisible(false)}
+                onOk={() => setIsSubmit(true)}
+                onCancel={() => {
+                    setVisible(false)
+                    setIsSubmit(false)
+                }}
             >
-                <FormTable columns={columns} prices={prices} />
+                <FormTable
+                    columns={columns}
+                    prices={prices}
+                    rangeTime={rangeTime}
+                    isSubmit={isSubmit}
+                    onSubmit={handleSubmitPrice}
+                />
             </ModalStyled>
         </>
     )

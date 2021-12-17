@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import styled from 'styled-components'
 import {
     Form,
@@ -7,11 +7,10 @@ import {
     Select,
     Table,
     Typography,
-    Input,
+    Space,
     Button,
 } from 'antd'
-import { OwnerContext } from '../../contexts/OwnerProvider'
-import { getRangeTime, timestrToSec } from '../../helpers/convert'
+import { timestrToSec } from '../../helpers/convert'
 
 const FormStyled = styled(Form)`
     .editable-row .ant-form-item-explain {
@@ -26,7 +25,7 @@ const FormStyled = styled(Form)`
 
 const SelectComponent = ({ data, current, onChange }) => {
     return (
-        <Select defaultValue={current} onChange={onChange}>
+        <Select defaultValue={''} onChange={onChange}>
             {data.map((time, index) => {
                 return (
                     <Select.Option key={index} value={time}>
@@ -38,8 +37,6 @@ const SelectComponent = ({ data, current, onChange }) => {
     )
 }
 
-const timeData = ['06:00', '06:30', '07:00', '07:30']
-
 const renderDataSource = (prices) => {
     return prices.map(({ time: { startTime, endTime }, price }, index) => ({
         key: index,
@@ -48,11 +45,95 @@ const renderDataSource = (prices) => {
         price,
     }))
 }
+
+const validate = ({ getFieldValue }, records) => ({
+    validator(_, value) {
+        // console.log(prevRecord)
+        //console.log(value)
+        if (!value.toString().trim()) return Promise.reject()
+        console.log(records)
+        switch (_.field) {
+            case 'startTime':
+                {
+                    const startTime = timestrToSec(value)
+                    const endTime = timestrToSec(getFieldValue('endTime'))
+
+                    if (records.length > 0) {
+                        const valid = records.every((item) => {
+                            const start = timestrToSec(item.startTime)
+                            const end = timestrToSec(item.endTime)
+                            if (!endTime)
+                                return !(startTime >= start && startTime < end)
+                            return (
+                                (startTime < start && endTime <= start) ||
+                                (startTime >= end && endTime > end)
+                            )
+                        })
+                        console.log(valid)
+                        if (!valid) break
+                    }
+                    if (!endTime) return Promise.resolve()
+                    if (startTime < endTime) return Promise.resolve()
+
+                    // GOOD
+                    // -----
+                    // prev ->       [     ]
+                    // current ->  [ ]
+                    // -----
+                    // prev ->       [     ]
+                    // current ->          [   ]
+                    // ----------------
+                    // BAD
+                    // -----
+                    // prev ->       [     ]
+                    // current ->  [   ]
+                    // -----
+                    // prev ->       [     ]
+                    // current ->  [         ]
+                    // -----
+                }
+                break
+            case 'endTime':
+                {
+                    const endTime = timestrToSec(value)
+                    const startTime = timestrToSec(getFieldValue('startTime'))
+
+                    if (records.length > 0) {
+                        const valid = records.every((item) => {
+                            const start = timestrToSec(item.startTime)
+                            const end = timestrToSec(item.endTime)
+                            if (!startTime)
+                                return !(endTime <= end && endTime > start)
+                            return (
+                                (startTime < start && endTime <= start) ||
+                                (startTime >= end && endTime > end)
+                            )
+                        })
+                        console.log(valid)
+                        if (!valid) break
+                    }
+                    if (!startTime) return Promise.resolve()
+                    if (endTime > startTime) return Promise.resolve()
+                }
+                break
+            case 'price':
+                return Promise.resolve()
+
+            default:
+                return Promise.resolve()
+        }
+
+        return Promise.reject(new Error('Thời gian không đúng!'))
+    },
+})
+
 const EditableCell = ({
     editing,
     dataIndex,
     title,
     inputType,
+    prevRecord = null,
+    records,
     record,
     index,
     rangeTime,
@@ -68,7 +149,15 @@ const EditableCell = ({
                 onChange={onChange}
             />
         ) : (
-            <InputNumber />
+            <InputNumber
+                min={100000}
+                max={10000000}
+                step={10000}
+                formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                }
+                parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+            />
         )
     return (
         <td {...restProps}>
@@ -83,6 +172,11 @@ const EditableCell = ({
                             required: true,
                             message: `Vui lòng nhập ${title}`,
                         },
+                        ({ getFieldValue }) => {
+                            return validate({ getFieldValue }, records)
+                        },
+                        // dataIndex === 'price' && { type: 'number' },
+                        // dataIndex === 'endTime' && validateTime,
                     ]}
                 >
                     {inputNode}
@@ -94,39 +188,34 @@ const EditableCell = ({
     )
 }
 
-function FormTable({ columns, prices }) {
-    const {
-        state: {
-            current: { branch },
-        },
-    } = useContext(OwnerContext)
+const getOriginalData = (prices) => {
+    return renderDataSource(prices).sort((a, b) => {
+        // sort ascending
+        return timestrToSec(a.startTime) - timestrToSec(b.startTime)
+    })
+}
+
+function FormTable({ columns, prices, rangeTime, isSubmit, onSubmit }) {
     const [form] = Form.useForm()
-    const [data, setData] = useState(
-        renderDataSource(prices).sort((a, b) => {
-            // sort ascending
-            return timestrToSec(a.startTime) - timestrToSec(b.startTime)
-        })
-    )
+    const [data, setData] = useState(getOriginalData(prices))
     const [editingKey, setEditingKey] = useState('')
-    const [rangeTime, setRangeTime] = useState(
-        getRangeTime(branch.startTime, branch.endTime)
-    )
 
     //console.log(editingKey)
-    console.log(branch)
+    //console.log(branch)
     //console.log(rangeTime)
+
+    console.log(data)
 
     const isEditing = (record) => record.key === editingKey
 
-    console.log(data)
     const add = () => {
         // Kiểm tra có còn thêm được khung giờ nào không
         const key = data.length
         const newData = {
             key,
-            startTime: rangeTime[0],
-            endTime: rangeTime[rangeTime.length - 1],
-            price: 0,
+            startTime: '',
+            endTime: '',
+            price: 100000,
         }
         setData([...data, newData])
         setEditingKey(key)
@@ -136,11 +225,16 @@ function FormTable({ columns, prices }) {
         form.setFieldsValue({
             ...record,
         })
-        console.log(record)
+        //console.log(record)
         setEditingKey(record.key)
     }
 
+    const handleDelete = (key) => {
+        const newData = data.filter((item) => key !== item.key)
+        setData([...newData])
+    }
     const cancel = () => {
+        form.resetFields()
         setEditingKey('')
         setData(() => {
             return data
@@ -151,13 +245,16 @@ function FormTable({ columns, prices }) {
                 .map((item, index) => {
                     return { ...item, key: index } // override key after sort
                 })
+                .filter((item) => item.startTime !== '' && item.endTime !== '')
         })
     }
 
     const save = async (key) => {
         try {
             const row = await form.validateFields()
+            form.resetFields()
             console.log(row)
+
             const newData = [...data]
             const index = newData.findIndex((item) => key === item.key)
 
@@ -213,12 +310,22 @@ function FormTable({ columns, prices }) {
                         </Popconfirm>
                     </span>
                 ) : (
-                    <Typography.Link
-                        disabled={editingKey !== ''}
-                        onClick={() => edit(record)}
-                    >
-                        Sửa
-                    </Typography.Link>
+                    <Space>
+                        <Typography.Link
+                            disabled={editingKey !== ''}
+                            onClick={() => edit(record)}
+                        >
+                            Sửa
+                        </Typography.Link>
+                        <Popconfirm
+                            title="Xoá giá?"
+                            onConfirm={() => handleDelete(record.key)}
+                        >
+                            <Typography.Link disabled={editingKey !== ''}>
+                                Xoá
+                            </Typography.Link>
+                        </Popconfirm>
+                    </Space>
                 )
             },
         },
@@ -231,6 +338,11 @@ function FormTable({ columns, prices }) {
         return {
             ...col,
             onCell: (record) => ({
+                records: [
+                    ...data.filter(
+                        (item) => item.startTime !== '' && item.endTime !== ''
+                    ),
+                ],
                 record,
                 inputType:
                     col.dataIndex === 'startTime' || col.dataIndex === 'endTime'
@@ -244,11 +356,26 @@ function FormTable({ columns, prices }) {
         }
     })
 
+    useLayoutEffect(() => {
+        if (isSubmit) {
+            onSubmit(data)
+        }
+    }, [isSubmit])
+
     return (
-        <FormStyled form={form} component={false}>
+        <FormStyled
+            form={form}
+            component={false}
+            initialValues={{
+                startTime: '',
+                endTime: '',
+                price: 100000,
+            }}
+        >
             <Button
                 onClick={add}
                 type="primary"
+                disabled={editingKey !== ''}
                 style={{
                     marginBottom: 16,
                 }}
