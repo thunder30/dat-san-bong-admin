@@ -6,6 +6,7 @@ import toCommas from '../../helpers/toCommas'
 import FormTable from '../../components/FormTable'
 import { OwnerContext } from '../../contexts/OwnerProvider'
 import { getRangeTime } from '../../helpers/convert'
+import * as services from '../../core/services/price'
 
 const CardStyled = styled(Card)`
     text-align: center;
@@ -105,32 +106,57 @@ const checkRangeTime = (rangeTime, data) => {
     })
 }
 
-function CrudPrice({ prices, pitchTypeId }) {
+function CrudPrice({ prices = [], pitchTypeId = null }) {
     const [visible, setVisible] = useState(false)
     const [isSubmit, setIsSubmit] = useState(false)
+    const [confirmLoading, setConfirmLoading] = useState(false)
     const {
         state: {
             current: { branch },
         },
     } = useContext(OwnerContext)
-    const [rangeTime, setRangeTime] = useState(
-        getRangeTime(branch.startTime, branch.endTime)
-    )
-    const handleSubmitPrice = (data) => {
+    const [rangeTime, setRangeTime] = useState(() => {
+        // kiem tra
+        const start = (branch && branch.startTime) || '00:00'
+        const end = (branch && branch.endTime) || '23:00'
+        return getRangeTime(start, end)
+    })
+    const handleSubmitPrice = async (data) => {
         // kiem tra
         const rs = checkRangeTime(rangeTime, data)
 
         if (rs) {
+            setConfirmLoading(true)
             // call api
             console.log(`call api`)
+            const prices = data.map(({ startTime, endTime, price }) => ({
+                startTime,
+                endTime,
+                price: price.toString(),
+            }))
+            const _data = await services.updatePrice(pitchTypeId, prices)
+            console.log(_data)
+            if (_data.success) {
+                notification.success({
+                    duration: 10,
+                    description: _data.message,
+                })
+                window.location.reload()
+            } else {
+                notification.error({
+                    duration: 10,
+                    description: _data.message,
+                })
+            }
             setVisible(false)
-            setIsSubmit(false)
         } else {
             notification.error({
                 duration: 10,
                 description: 'Vui lòng cập nhật tất cả thời gian còn lại!',
             })
         }
+        setIsSubmit(false)
+        setConfirmLoading(false)
     }
     return (
         <>
@@ -157,6 +183,7 @@ function CrudPrice({ prices, pitchTypeId }) {
             </Col>
             <ModalStyled
                 visible={visible}
+                confirmLoading={confirmLoading}
                 onOk={() => setIsSubmit(true)}
                 onCancel={() => {
                     setVisible(false)

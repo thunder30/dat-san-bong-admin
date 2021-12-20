@@ -204,7 +204,7 @@ function FormTable({ columns, prices, rangeTime, isSubmit, onSubmit }) {
     //console.log(branch)
     //console.log(rangeTime)
 
-    console.log(data)
+    //console.log(data)
 
     const isEditing = (record) => record.key === editingKey
 
@@ -225,7 +225,7 @@ function FormTable({ columns, prices, rangeTime, isSubmit, onSubmit }) {
         form.setFieldsValue({
             ...record,
         })
-        //console.log(record)
+        console.log(record)
         setEditingKey(record.key)
     }
 
@@ -253,7 +253,7 @@ function FormTable({ columns, prices, rangeTime, isSubmit, onSubmit }) {
         try {
             const row = await form.validateFields()
             form.resetFields()
-            console.log(row)
+            //console.log(row)
 
             const newData = [...data]
             const index = newData.findIndex((item) => key === item.key)
