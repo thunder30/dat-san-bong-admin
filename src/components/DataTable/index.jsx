@@ -4,12 +4,11 @@ import { Table } from 'antd'
 function DataTable({ columns, dataSource, isLoading, ...rest }) {
     const pagination = {
         defaultCurrent: 1,
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         total: dataSource.length,
         showSizeChanger: true,
-        pageSizeOptions: ['5', '10', '20'],
-        showTotal: (total, range) =>
-            `${range[0]}-${range[1]} of ${total} items`,
+        pageSizeOptions: ['10', '20', '50'],
+        showTotal: (total, range) => `${range[0]}-${range[1]} trên ${total}`,
     }
 
     return (
@@ -19,7 +18,7 @@ function DataTable({ columns, dataSource, isLoading, ...rest }) {
             size="small"
             loading={isLoading}
             pagination={pagination}
-        ></Table>
+        />
     )
 }
 

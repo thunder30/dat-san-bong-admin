@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Badge, Menu, Dropdown } from 'antd'
+import { Badge, Menu, Dropdown, Table } from 'antd'
 import {
     EllipsisOutlined,
     EditOutlined,
@@ -143,10 +143,11 @@ function CrudUser({ role }) {
     return (
         <>
             <h1>{title[role]}</h1>
-            <DataTable
+            <Table
                 columns={columns}
                 dataSource={dataSource}
                 isLoading={isLoading}
+                size="small"
             />
         </>
     )

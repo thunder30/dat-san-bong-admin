@@ -54,4 +54,20 @@ const getRangeTime = (_startTime, _endTime) => {
     return ranges
 }
 
-export { getRangeTime, timestrToSec }
+const convertBookingToTime = (startTime, endTime) => {
+    return `${startTime.split(' ')[1]} - ${endTime.split(' ')[1]} ${
+        startTime.split(' ')[0]
+    }`
+}
+
+const convertStringToDate = (dateTime) => {
+    // 12/11/2023 11:00
+    const [_date, time] = dateTime.split(' ')
+    const [date, month, year] = _date.split('/')
+    const [hours, minutes] = time.split(':')
+    const rs = new Date(year, month - 1, date, hours, minutes)
+    //console.log(`conver date: `, rs)
+    return rs
+}
+
+export { getRangeTime, timestrToSec, convertBookingToTime, convertStringToDate }

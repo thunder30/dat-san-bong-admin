@@ -1,42 +1,43 @@
 import React, { useContext } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
+import { Table, Tag } from 'antd'
 
 import DataTable from '../components/DataTable'
 import { BookingContext } from '../contexts/BookingProvider'
 import toCommas from '../helpers/toCommas'
 import { AuthContext } from '../contexts/AuthProvider'
-import convertStringToDate from '../helpers/convertStringToDate'
+import { convertStringToDate, convertBookingToTime } from '../helpers/convert'
 
 const columns = [
-    {
-        title: 'Chi tiết phiếu',
-        dataIndex: 'bookingDetailId',
-        align: 'center',
-    },
+    // {
+    //     title: 'Chi tiết phiếu',
+    //     dataIndex: 'bookingDetailId',
+    //     align: 'center',
+    //     key: 'bookingDetailId',
+    // },
     {
         title: 'Sân',
         dataIndex: 'pitchName',
         align: 'center',
+        key: 'pitchName',
     },
     {
         title: 'Loại sân',
         dataIndex: 'pitchTypeName',
         align: 'center',
+        key: 'pitchTypeName',
     },
     {
-        title: 'Giờ bắt đầu',
-        dataIndex: 'startTime',
+        title: 'Thời gian đá',
+        dataIndex: 'bookingTime',
         align: 'center',
-    },
-    {
-        title: 'Giờ kết thúc',
-        dataIndex: 'endTime',
-        align: 'center',
+        key: 'bookingTime',
     },
     {
         title: 'Đơn giá',
         dataIndex: 'price',
         align: 'center',
+        key: 'price',
         render: (price) => {
             return <b>{toCommas(price)}</b>
         },
@@ -45,13 +46,66 @@ const columns = [
         title: 'Trạng thái',
         dataIndex: 'status',
         align: 'center',
+        key: 'status',
+        render: (_status) => {
+            const { code, description } = _status
+            let color
+            switch (code) {
+                case 'ST1':
+                    color = 'geekblue'
+                    break
+                case 'ST2':
+                    color = 'magenta'
+                    break
+                case 'ST3':
+                    color = 'red'
+                    break
+                case 'ST4':
+                    color = 'green'
+                    break
+                case 'ST5':
+                    color = 'volcano'
+                    break
+                default:
+                    break
+            }
+            return <Tag color={color}>{description}</Tag>
+        },
     },
 ]
 
-const handleStatus = (endTime, description) => {
-    const _endTime = convertStringToDate(endTime)
-    // Thời gian đá bé hơn hiện tại -> hợp lệ
-    return _endTime < Date.now() ? 'Không checkin' : description
+const handleStatus = (startTime, endTime, _status) => {
+    const { status, description } = _status
+
+    switch (status) {
+        case 'ST1':
+            // startTime: 12/21/2021 13:00
+            // systems date: 12/21/2021 13:02
+            // Thời gian bắt đầu đá lớn hơn tg hệ thống -> Không checkin (ST5)
+            const _startTime = convertStringToDate(startTime)
+            if (_startTime < Date.now()) {
+                _status = {
+                    code: 'ST5',
+                    description: 'Không checkin',
+                }
+            }
+            return _status
+
+        case 'ST2':
+            // Thời gian kết thúc bé hơn thời gian hệ thống -> Hoàn thành (ST4)
+            const _endTime = convertStringToDate(endTime)
+            if (_endTime < Date.now()) {
+                _status = {
+                    code: 'ST4',
+                    description: 'Hoàn thành',
+                }
+            }
+
+            return _status
+
+        default:
+            return _status
+    }
 }
 
 function BookingDetail() {
@@ -79,7 +133,7 @@ function BookingDetail() {
                 displayName: pitchName,
                 pitchType: { displayName: pitchTypeName },
             },
-            status: { status, description },
+            status,
             startTime,
             endTime,
             price,
@@ -88,22 +142,18 @@ function BookingDetail() {
             bookingDetailId: _id,
             pitchName,
             pitchTypeName,
-            status:
-                status === 'ST1'
-                    ? handleStatus(endTime, description)
-                    : description,
-            startTime,
-            endTime,
+            bookingTime: convertBookingToTime(startTime, endTime),
+            status: handleStatus(startTime, endTime, status),
             price,
         })
     )
 
     return (
         <>
-            <h1>{`Số phiếu:  ${params.id}`}</h1>
+            {/* <h1>{`Số phiếu:  ${params.id}`}</h1> */}
             <DataTable
-                columns={columns}
                 dataSource={bookingDetails}
+                columns={columns}
                 isLoading={isLoading}
             />
         </>

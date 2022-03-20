@@ -12,14 +12,14 @@ import * as apiBooking from '../../core/services/booking'
 const { Item } = Form
 
 const columnBookings = [
-    {
-        title: 'Mã phiếu',
-        dataIndex: 'bookingId',
-        align: 'center',
-    },
+    // {
+    //     title: 'Mã phiếu',
+    //     dataIndex: 'bookingId',
+    //     align: 'center',
+    // },
     {
         title: 'Khách hàng',
-        dataIndex: 'email',
+        dataIndex: 'fullName',
         align: 'center',
     },
     {
@@ -141,13 +141,13 @@ function CrudBranch() {
             endDate,
             total,
             isPaid,
-            customer: { email },
+            customer: { firstName, lastName },
             pitchBranch: { displayName: pitchBranchName },
         }) => ({
             key: _id,
             bookingId: _id,
             pitchBranchName,
-            email,
+            fullName: `${firstName} ${lastName}`,
             startDate,
             endDate,
             total,
